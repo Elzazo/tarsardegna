@@ -2,7 +2,7 @@
 	<head>
 			<script>
 			  var matrice = [];
-			  var days = <?php $days = cal_days_in_month(CAL_GREGORIAN, 5, 2022); echo $days;  ?>; //giorni del mese
+			  var days = <?php $days = cal_days_in_month(CAL_GREGORIAN, 5, 2023); echo $days;  ?>; //giorni del mese
 			  var numDipendenti = 13;
 			  var numRows = numDipendenti + 3;
 			  
@@ -172,6 +172,8 @@
 					//console.log("valore da attuale:"+matriceAttuale[idx][day]);
 					matriceAttuale[idx][day]=document.getElementById(id).getAttribute("valore");
 				}
+				
+				document.getElementById("comandi").style.display = (confrontaMatrici(matrice, matriceAttuale).length > 0)  ?  "table-row" : "none";
 			  }
 			
 			
@@ -324,8 +326,10 @@
 			  
 			  function confrontaMatrici(matrice1, matrice2) {
 				  var differenze = [];
-				  for (var i = 0; i < 16; i++) {
-					for (var j = 0; j < 31; j++) {
+				  let nr = matrice.length; // numero di righe
+				  let nc = matrice[0].length;
+				  for (var i = 0; i < nr; i++) {
+					for (var j = 0; j < nc; j++) {
 					  if (matrice1[i][j] !== matrice2[i][j]) {
 					    var nome = nomiRighe[i];
 						var valore1 = matrice1[i][j];
@@ -335,7 +339,6 @@
 					  }
 					}
 				  }
-				  
 				  return differenze;
 			  }
 			  
@@ -374,7 +377,7 @@
 					  prefix = prefix + "-";
 					  for (var j = 0; j < nc; j++){
 						  var id = prefix+(j+1);
-						  console.log("id "+id+ ", valore "+ matrice[i][j]);
+						  //console.log("id "+id+ ", valore "+ matrice[i][j]);
 						  impostaClasse(document.getElementById(id),  matrice[i][j]);
 						  document.getElementById(id).setAttribute("valore", matrice[i][j]);
 						  if (i > 2) {
@@ -384,14 +387,20 @@
 				  }
 			  }
 			  
+			  function caricaFunzioni() {
+				  
+			  }
+			  
+			  
 			  function processaMatrice() {
 				var xhr = new XMLHttpRequest();
 				  xhr.open("GET", "data/Maggio.json", true);
 				  xhr.onreadystatechange = function() {
 					if (xhr.readyState === 4 && xhr.status === 200) {
 					  matrice = JSON.parse(xhr.responseText);
-					  console.log(matrice);
+					  //console.log(matrice);
 					  caricaValori();
+					  caricaFunzioni();
 					  caricaMatriceAttuale();
 					  calcolaPercentualeUfficioIniziale();
 					}
@@ -640,7 +649,7 @@
 				   ?>
 				  <td colspan="3"/>
 			    </tr>
-				<tr>
+				<tr id="comandi" style="display:none">
 					<td class="senza-bordi" colspan="18">
 						<button style="width:100%" onclick="salva()">Salva</button>
 						</td>
