@@ -1,0 +1,13 @@
+lun,ven
+ven
+gio
+ 
+gio,ven
+lun,mer
+mer
+lun,ven
+ 
+ 
+ 
+ 
+ 
