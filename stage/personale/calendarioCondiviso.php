@@ -2,7 +2,8 @@
 	<head>
 			<script>
 			  var matrice = [];
-			  var matriceAttuale = [];			  
+			  var matriceAttuale = [];
+			  var today = <?php echo date('d'); ?>;
 			  var month = <?php echo date('m'); ?>;
 			  var itMonths=["", "gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 			  var year = <?php echo date('Y'); ?>;
@@ -369,9 +370,34 @@
 				  }
 			  }
 			  
+			  function mettiColonnaOggiInGrassetto() {
+				  
+				// si salta la prima colonna e quindi il numero del giorno è l'indice corretto  
+				var colIndex = today;
+				console.log("mettiColonnaOggiInGrassetto() Today:"+today);
+				// Seleziona la tabella
+				var table = document.getElementById("calendarTable");
+				var size = 5;
+				var color = "lime";
+				// Itera su tutte le righe della tabella, a partire dalla seconda riga
+				for (var i = 1; i < (table.rows.length - 1); i++) { //l'ultima riga contiene i bottoni
+
+				  // Seleziona la cella corrispondente alla colonna desiderata
+				  var cell = table.rows[i].cells[colIndex];
+
+				  // Applica lo stile
+				  cell.style = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; ";
+				}
+				console.log("mettiColonnaOggiInGrassetto() th-"+today);
+				document.getElementById("th-"+today).style = "border-top: "+size+"px solid "+color+"; border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; "
+				table.rows[table.rows.length - 2].cells[colIndex].style = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-bottom: "+size+"px solid "+color+";"
+				
+			  }
+			  
 			  function start(){
 				  caricaNumeroGiorniLavorativi();
 				  processaMatrice();
+				  mettiColonnaOggiInGrassetto();
 			  }
 			  
 			</script>
@@ -459,11 +485,11 @@
 	</head>
 	
 	<body onload="start();">
-		<table>
+		<table id="calendarTable">
 			  <thead>
 				<tr>
 				  <th>01/05/2023 - 31/05/2023</th>
-				  <?php for ($i = 1; $i <= $days; $i++) { echo "<th>$i</th>\n";} ?>
+				  <?php for ($i = 1; $i <= $days; $i++) { echo "<th id='th-$i'>$i</th>\n";} ?>
 				  <th>%PresUfficio</th>
 				  <th>Ferie</th>
 				  <th>%PresIndividuale</th>
