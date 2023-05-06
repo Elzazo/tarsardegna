@@ -217,18 +217,15 @@
 			  function inviaDati() {
 				let xhr = new XMLHttpRequest();
 				let url = "salvaMatrice.php"; // L'URL della pagina PHP che elabora la richiesta
-
-				xhr.open("POST", url, true);
-				xhr.setRequestHeader("Content-type", "application/json");
-
 				xhr.onreadystatechange = function() {
 				  if (xhr.readyState === 4 && xhr.status === 200) {
 						alert(xhr.responseText);
 				  }
 				};
-
-				var data = JSON.stringify({matrice: matriceAttuale, mese: itMonths[month]}); // Converti la matrice in una stringa JSON
+				var data = "mese=" + encodeURIComponent(itMonths[month]) + "&matrice=" + encodeURIComponent(JSON.stringify(matriceAttuale));
 				console.log("Invio: "+data);
+				xhr.open("GET", "salvaMatrice.php?" + data, true);
+				xhr.setRequestHeader("Content-type", "application/json");
 				xhr.send(data); // Invia la richiesta con i dati della matrice
 
 			  }
