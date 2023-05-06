@@ -2,7 +2,9 @@
 	<head>
 			<script>
 			  var matrice = [];
+			  var matriceAttuale = [];			  
 			  var month = <?php echo date('m'); ?>;
+			  var itMonths=["", "gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 			  var year = <?php echo date('Y'); ?>;
 			  var days = <?php $days = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y')); echo $days;  ?>; //giorni del mese
 			  var numDipendenti = 13;
@@ -12,14 +14,16 @@
 			  function aggiornaMatriceAttuale(id) {
 				var idx = 0; var day = id.split("-")[1]; 
 				if (id.indexOf("presidente")!== -1) {
-					console.log("Presidente da aggiornare");
+					//console.log("Presidente da aggiornare");
 					idx = 1;
+				}else if (id.indexOf("sg")!== -1) {
+					idx = 2;
 				}else if (id.indexOf("cella")!== -1) {
 					var subStrings = id.split("-");
 					idx = parseInt(subStrings[1]) + 2;
 					day = subStrings[2];
 				}
-				
+				day = day - 1;
 				//console.log("id: "+id+", idx="+idx+", day="+day);
 				//console.log(matriceAttuale);
 				if (id.indexOf("scadenze")!== -1){
@@ -31,7 +35,9 @@
 					matriceAttuale[idx][day]=document.getElementById(id).getAttribute("valore");
 				}
 				
-				document.getElementById("comandi").style.display = (confrontaMatrici(matrice, matriceAttuale).length > 0)  ?  "table-row" : "none";
+				var diff = confrontaMatrici(matrice, matriceAttuale).length;
+				//console.log("Differenze rilevate:" + diff);
+				document.getElementById("comandi").style.display = (diff > 0)  ?  "table-row" : "none";
 			  }
 			
 			
@@ -87,6 +93,8 @@
 					  cella.classList.add("rossa");
 					}else if (nuovoValore === "S") {
 					  cella.classList.add("gialla");
+					}else if (nuovoValore === "P") {
+					  cella.classList.add("giallina");
 					}
 			  }
 			
@@ -130,7 +138,7 @@
 				  cella.classList.remove("blu");
 				  cella.classList.add("gialla");
 				}
-				aggiornaMatriceAttuale(id);
+				aggiornaMatriceAttuale(cella.getAttribute("id"));
 			  }
 			  
 			  function presidenteInSede(cella) {
@@ -184,8 +192,8 @@
 			  
 			  function confrontaMatrici(matrice1, matrice2) {
 				  var differenze = [];
-				  let nr = matrice.length; // numero di righe
-				  let nc = matrice[0].length;
+				  let nr = matrice1.length; // numero di righe
+				  let nc = matrice1[0].length;
 				  for (var i = 0; i < nr; i++) {
 					for (var j = 0; j < nc; j++) {
 					  if (matrice1[i][j] !== matrice2[i][j]) {
@@ -193,7 +201,7 @@
 						var valore1 = matrice1[i][j];
 						var valore2 = matrice2[i][j];
         				differenze.push({riga: i+1, colonna: j+1, valore1: matrice1[i][j], valore2: matrice2[i][j]});
-						console.log(nomiRighe[i] + " " + frasi[valore2]+ " giorno " + j + " maggio.");
+						console.log(nomiRighe[i] + " " + frasi[valore2]+ " giorno " + j + " "+itMonths[month]+".");
 					  }
 					}
 				  }
@@ -202,22 +210,28 @@
 			  
 			  function salva() {
 				confrontaMatrici(matrice, matriceAttuale);
+				inviaDati();
 			  }
 			  
 			  
 			  function inviaDati() {
-				var xhr = new XMLHttpRequest();
-				var url = "salva_matrice.php";
-				var data = "file=maggio2023&matrix=" + encodeURIComponent(JSON.stringify(matriceAttuale));
+				let xhr = new XMLHttpRequest();
+				let url = "salvaMatrice.php"; // L'URL della pagina PHP che elabora la richiesta
 
 				xhr.open("POST", url, true);
-				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-				xhr.send(data);
-			  }
-			  
-  			  var matrice = [];			  
-  			  var matriceAttuale = [];			  
+				xhr.setRequestHeader("Content-type", "application/json");
 
+				xhr.onreadystatechange = function() {
+				  if (xhr.readyState === 4 && xhr.status === 200) {
+						alert(xhr.responseText);
+				  }
+				};
+
+				var data = JSON.stringify({matrice: matriceAttuale, mese: itMonths[month]}); // Converti la matrice in una stringa JSON
+				console.log("Invio: "+data);
+				xhr.send(data); // Invia la richiesta con i dati della matrice
+
+			  }
 			  
 			  function caricaValori()
 			  {
@@ -238,7 +252,7 @@
 						  //console.log("id "+id+ ", valore "+ matrice[i][j]);
 						  impostaClasse(document.getElementById(id),  matrice[i][j]);
 						  document.getElementById(id).setAttribute("valore", matrice[i][j]);
-						  if (i > 2) {
+						  if (i > 2 && (matrice[i][j] != 'S' &&  matrice[i][j] != 'D') ) {
 							document.getElementById(id).innerHTML = matrice[i][j];
 						  }
 					  }
@@ -247,6 +261,49 @@
 			  
 			  function caricaFunzioni() {
 				  
+				  //scadenze
+				  for (var i = 1; i <= days; i++) {
+						var element = document.getElementById('scadenze-'+i); //seleziono l'elemento da modificare
+					    //console.log('scadenze-'+i+", valore della matrice "+ matrice[0][i-1]);
+						if (matrice[0][i-1] != 'S' && matrice[0][i-1] != 'D'){
+							element.onchange = function() { aggiornaMatriceAttuale(this.getAttribute('id')); }; //aggiungo la funzione onchange
+							element.setAttribute("contenteditable", "true");
+						}
+				  }
+				  
+				  //presidente
+				  for (var i = 1; i <= days; i++) {
+						var element = document.getElementById('presidente-'+i); //seleziono l'elemento da modificare
+					    //console.log('scadenze-'+i+", valore della matrice "+ matrice[0][i-1]);
+						if (matrice[1][i-1] != 'S' && matrice[1][i-1] != 'D'){
+							element.onclick = function() { presidenteInSede(this); }; //aggiungo la funzione click
+						}else {
+							element.style.cursor = "auto";
+						}
+				  }
+				  
+				  //sg
+				  for (var i = 1; i <= days; i++) {
+						var element = document.getElementById('sg-'+i); //seleziono l'elemento da modificare
+					    //console.log('scadenze-'+i+", valore della matrice "+ matrice[0][i-1]);
+						if (matrice[2][i-1] != 'S' && matrice[2][i-1] != 'D'){
+							element.onchange = function() { aggiornaMatriceAttuale(this.getAttribute('id')); }; //aggiungo la funzione onclick
+							element.setAttribute("contenteditable", "true");
+						}
+				  }
+				  
+				  // dipendenti
+				  for (var d = 1; d <= numDipendenti; d++){
+					   for (var i = 1; i <= days; i++) {
+							var element = document.getElementById('cella-'+d+'-'+i); //seleziono l'elemento da modificare
+							//console.log('cella-'+d+'-'+i+", valore della matrice "+ matrice[d-1][i-1]);
+							if (matrice[d-1][i-1] == 'S' || matrice[d-1][i-1] == 'T'){
+								element.onclick = function() { turnoDelSabato(this); }; //aggiungo la funzione onchange
+							}else if (matrice[d-1][i-1] != 'D'){
+								element.onclick = function() { cambiaValore(this); }; //aggiungo la funzione onchange
+							}
+					   }
+				   }
 			  }
 			  
 			  
@@ -266,7 +323,7 @@
 			  
 			  function processaMatrice() {
 				var xhr = new XMLHttpRequest();
-				  xhr.open("GET", "data/Maggio.json", true);
+				  xhr.open("GET", "data/"+itMonths[month]+".json", true);
 				  xhr.onreadystatechange = function() {
 					if (xhr.readyState === 4 && xhr.status === 200) {
 					  matrice = JSON.parse(xhr.responseText);
@@ -280,7 +337,12 @@
 			  }
 			  
 			  function caricaMatriceAttuale(){
-				  matriceAttuale = matrice.slice();
+				  for (var i = 0; i < numRows; i++) {
+					matriceAttuale[i]=[];
+					for (var j = 0; j < days; j++) {
+						matriceAttuale[i][j] = matrice[i][j];
+					}
+				  }
 			  }
 			  
 			  function start(){
@@ -330,6 +392,7 @@
 		  .rossa {
 			background-color: red;
 			color: white;
+			cursor:auto;
 		  }
 		  
 		  .blu {
@@ -389,19 +452,19 @@
 						echo "<th>$value</th>\n";
 						if (0 == $key) {
 							for ($i = 1; $i <= $days; $i++) {
-								echo "<td id='scadenze-".$i."' onchange=\"aggiornaMatriceAttuale(this.getAttribute('id'));\" contenteditable='true'/>";
+								echo "<td id='scadenze-".$i."'/>";
 							}
 						}else if (1 == $key) {
 							for ($i = 1; $i <= $days; $i++) {
-								echo "<td id='presidente-".$i."' onclick='presidenteInSede(this)'; valore='A' class='cella'/>";
+								echo "<td id='presidente-".$i."' class='cella'/>";
 							}
 						}else if (2 == $key) {
 							for ($i = 1; $i <= $days; $i++) {
-								echo "<td id='sg-".$i."' onchange=\"aggiornaMatriceAttuale(this.getAttribute('id'));\" valore='A' contenteditable='true'/>";
+								echo "<td id='sg-".$i."'/>";
 							}
 						}else {
 							for ($i = 1; $i <= $days; $i++) {
-								echo "<td class='cella' id='cella-".($key-2)."-".$i."' valore='X' onclick='cambiaValore(this)'>X</td>\n";
+								echo "<td class='cella' id='cella-".($key-2)."-".$i."'></td>\n";
 							}
 							echo "<td id='presUfficio-".($key-2)."'/>\n";
 							echo "<td id='ferie-".($key-2)."'/>\n";

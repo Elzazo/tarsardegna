@@ -25,7 +25,7 @@
 	$numDipendenti = 13;
 	$year = 2023;
 	$data_pasqua = data_pasqua($year);
-	$it_months=["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+	$it_months=["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 	// Definisci le date di tutte le festività dell'anno 2023
 	$giorni_festivi = array(
 					  $year."-01-01", // Capodanno
@@ -80,7 +80,10 @@
 					if ($weekday == 6) {
 						$row[] = "S";
 					} else if ($weekday <= 5) {
-						if ($i > 2){
+						if ($i == 1){
+							$row[] = "A";
+						}
+						else if ($i > 2){
 							$row[] = "X";
 						}else {
 							if ($i == 0) {
