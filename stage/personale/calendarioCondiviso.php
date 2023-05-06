@@ -2,155 +2,13 @@
 	<head>
 			<script>
 			  var matrice = [];
-			  var days = <?php $days = cal_days_in_month(CAL_GREGORIAN, 5, 2023); echo $days;  ?>; //giorni del mese
+			  var month = <?php echo date('m'); ?>;
+			  var year = <?php echo date('Y'); ?>;
+			  var days = <?php $days = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y')); echo $days;  ?>; //giorni del mese
 			  var numDipendenti = 13;
 			  var numRows = numDipendenti + 3;
-			  
-			  <?php 
-			  function data_pasqua($anno) {
-				  $a = $anno % 19;
-				  $b = (int)($anno / 100);
-				  $c = $anno % 100;
-				  $d = (int)($b / 4);
-				  $e = $b % 4;
-				  $f = (int)(($b + 8) / 25);
-				  $g = (int)(($b - $f + 1) / 3);
-				  $h = (19 * $a + $b - $d - $g + 15) % 30;
-				  $i = (int)($c / 4);
-				  $k = $c % 4;
-				  $l = (32 + 2 * $e + 2 * $i - $h - $k) % 7;
-				  $m = (int)(($a + 11 * $h + 22 * $l) / 451);
-				  $mese = (int)(($h + $l - 7 * $m + 114) / 31);
-				  $giorno = (($h + $l - 7 * $m + 114) % 31) + 1;
-				  return date("Y-m-d", strtotime("$anno-$mese-$giorno"));
-				}
-				
-				$anno_corrente = date("Y");
-				$data_pasqua = data_pasqua($anno_corrente);
-				
-				$giorni_festivi = array(
-				  "2023-01-01", // Capodanno
-				  "2023-01-06", // Epifania
-				  $data_pasqua, // Pasqua
-				  date("Y-m-d", strtotime("$data_pasqua +1 day")), // Lunedì dell'Angelo
-				  "2023-04-25", // Festa della Liberazione
-				  "2023-05-01", // Festa dei Lavoratori
-				  "2023-06-02", // Festa della Repubblica
-				  "2023-08-15", // Assunzione di Maria
-				  "2023-11-01", // Tutti i Santi
-				  "2023-12-08", // Immacolata Concezione
-				  "2023-12-25", // Natale
-				  "2023-12-26", // Santo Stefano
-				);
-				
-				function giorni_lavorativi($mese, $anno, $giorni_festivi = array()) {
-				  $num_giorni = cal_days_in_month(CAL_GREGORIAN, $mese, $anno);
-				  $num_giorni_lavorativi = 0;
-
-				  for ($i = 1; $i <= $num_giorni; $i++) {
-					$data = date("Y-m-d", strtotime("$anno-$mese-$i"));
-					$giorno_settimana = date("N", strtotime($data));
-
-					if ($giorno_settimana <= 5 && !in_array($data, $giorni_festivi)) {
-					  $num_giorni_lavorativi++;
-					}
-				  }
-
-				  return $num_giorni_lavorativi;
-				}				
-				$giorni_lavorativi = giorni_lavorativi(5, 2023, $giorni_festivi);			  
-			  ?>
-			   var lavorativi = <?php echo $giorni_lavorativi; ?>
-			 
-			 
-			  for (var i = 0; i < numRows; i++) {
-				matrice[i] = [];
-				for (var j = 0; j < days; j++) {
-				  matrice[i][j] = "";
-				}
-			  }
-			  
-			  // carico le scadenze vuote e sg vuoto
-			  for (var i = 0; i < days; i++) {
-				matrice[0][i]="";
-				matrice[2][i]="";
-			  }
-			  // carico presidente in sede
-			  for (var i = 0; i < days; i++) {
-				matrice[1][i]="A";
-			  }
-			  
-			  
-			  
-			  var sw = [];
-			  sw[0]="";//scadenze
-			  sw[1]="";//Presidente
-			  sw[2]="";//Pisano
-			  
-				<?php
-				// Apriamo il file in lettura
-				$handle = fopen("consts\sw.txt", "r");
-				
-				// IMPORTANTE: la riga di chi non fa smart è una riga con uno spazio
-
-				// Verifichiamo se il file è stato aperto correttamente
-				if ($handle) {
-					$i = 0;
-					// Leggiamo il file riga per riga
-					while (($line = fgets($handle)) !== false) {
-						// Rimuoviamo gli spazi e il newline dalla riga letta
-						$line = trim($line);
-						
-						// Assegniamo il valore della riga all'elemento corrispondente dell'array JS
-						$val=$i+3;
-						echo "sw[$val] = '$line';\n";
-						$i++;
-					}
-
-					// Chiudiamo il file
-					fclose($handle);
-				} else {
-					// In caso di errore nell'apertura del file
-					echo "Impossibile aprire il file!";
-				}
-				?>
-			  			  
-			  var daysOfWeek=["lun", "mar", "mer", "gio", "ven", "sab", "dom"];
-			  
-			  for (var i = 3; i < numRows; i++) {
-				for (var j = 0; j < days; j++) {
-				  var day = daysOfWeek[j%7];
-				  if (sw[i].indexOf(day) !== -1){
-						matrice[i][j] = "SW";
-				  }else if ("sab" === day) {
-						matrice[i][j] = "S";
-				  }else if ("dom" === day) {
-						matrice[i][j] = "D";
-				  }else {
-						matrice[i][j] = "X";
-				  }
-				}
-				//console.log(matrice[i]);
-			  }
-			  
-			  //giorni di festa nazionale applicati alla fine
-			  // a tutti, Presidente ed SG inclusi
-			  var giorniDiFesta = [];
-			  giorniDiFesta[0]=1;
-			  
-			  for (var i = 0; i < numRows; i++) {
-				for (var j = 1; j <= days; j++) {
-				  if (giorniDiFesta.includes(j)){
-					matrice[i][j-1] = "D";
-				  }
-				}
-			  }
-			  
-			  
-			  //console.log(matrice);
-			  //console.log(matriceAttuale);
-			  //console.log(JSON.stringify(matrice));
-			
+			  var lavorativi = 0;
+			  			
 			  function aggiornaMatriceAttuale(id) {
 				var idx = 0; var day = id.split("-")[1]; 
 				if (id.indexOf("presidente")!== -1) {
@@ -392,13 +250,26 @@
 			  }
 			  
 			  
+			  function caricaNumeroGiorniLavorativi() {
+				var xhr = new XMLHttpRequest();
+				  xhr.open("GET", "consts/lavorativi"+year+".json", true);
+				  xhr.onreadystatechange = function() {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+					  var jsonAr = JSON.parse(xhr.responseText);
+					  lavorativi = jsonAr[month-1];
+					  
+					}
+				  };
+			    xhr.send();
+			  }
+			  
+			  
 			  function processaMatrice() {
 				var xhr = new XMLHttpRequest();
 				  xhr.open("GET", "data/Maggio.json", true);
 				  xhr.onreadystatechange = function() {
 					if (xhr.readyState === 4 && xhr.status === 200) {
 					  matrice = JSON.parse(xhr.responseText);
-					  //console.log(matrice);
 					  caricaValori();
 					  caricaFunzioni();
 					  caricaMatriceAttuale();
@@ -413,6 +284,7 @@
 			  }
 			  
 			  function start(){
+				  caricaNumeroGiorniLavorativi();
 				  processaMatrice();
 			  }
 			  

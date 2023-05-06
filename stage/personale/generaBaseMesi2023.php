@@ -48,6 +48,8 @@
 	$startMonth = 1;
 	$endMonth = 12;
 	
+	$lavorativi = array(0,0,0,0,0,0,0,0,0,0,0,0);
+	
 	for ($m = $startMonth; $m <= $endMonth; $m++) {
  
 		$month_name = $it_months[$m-1];
@@ -64,12 +66,13 @@
 			}
 		}
 		
+		$lav = 0; //calcolo giorni lavorativi del mese
 		// Genera gli array con i valori "X", "S" e "D" per ogni giorno del mese 
 		for ($i = 0; $i < (3 + $numDipendenti); $i++) {
 			$row = array();
 			for ($j = 1; $j <= $num_days; $j++) {
 				$date = $year.'-'.str_pad($m, 2, "0", STR_PAD_LEFT).'-'.str_pad($j, 2, "0", STR_PAD_LEFT);
-				echo $date.'<br/>';
+				//echo $date.'<br/>';
 				if (in_array($date, $holidays)) {
 					$row[] = "D";
 				} else {
@@ -80,6 +83,9 @@
 						if ($i > 2){
 							$row[] = "X";
 						}else {
+							if ($i == 0) {
+								$lav++;
+							}
 							$row[] = "";
 						}
 					} else {
@@ -89,6 +95,8 @@
 			}
 			$matrix[] = $row;
 		}
+		
+		$lavorativi[$m-1] = $lav;
 
 		// Converti la matrice in JSON e salvala su un file
 		$json = json_encode($matrix);
@@ -105,6 +113,10 @@
 		echo "Errore durante il salvataggio del file del mese di ".$month_name;
 	}
 	}
+	
+	$json = json_encode($lavorativi);
+	$result = file_put_contents("consts/lavorativi2023.json", $json);
+	
 	?></h6>
 
 </body>
