@@ -12,6 +12,7 @@
 			  var lavorativi = 0;
 			  			
 			  function aggiornaMatriceAttuale(id) {
+				var actualFn = "aggiornaMatriceAttuale("+id+")";
 				var idx = 0; var day = id.split("-")[1]; 
 				if (id.indexOf("presidente")!== -1) {
 					//console.log("Presidente da aggiornare");
@@ -26,8 +27,9 @@
 				day = day - 1;
 				//console.log("id: "+id+", idx="+idx+", day="+day);
 				//console.log(matriceAttuale);
-				if (id.indexOf("scadenze")!== -1){
-					matriceAttuale[idx][day]=document.getElementById(id).innerHTML;
+				if (id.indexOf("scadenze")!== -1 || id.indexOf("sg") !== -1){
+					console.log(actualFn+":Aggiorno "+id.indexOf("scadenze")!== -1 ? "la scadenza" : "la nota sg" +" id "+idx+", giorno "+(day+1)+" con "+document.getElementById(id).textContent);
+					matriceAttuale[idx][day]=document.getElementById(id).textContent;
 				}else {
 					//console.log(id);
 					//console.log("valore da impostare:"+document.getElementById(id).getAttribute("valore"));
@@ -201,7 +203,11 @@
 						var valore1 = matrice1[i][j];
 						var valore2 = matrice2[i][j];
         				differenze.push({riga: i+1, colonna: j+1, valore1: matrice1[i][j], valore2: matrice2[i][j]});
-						console.log(nomiRighe[i] + " " + frasi[valore2]+ " giorno " + j + " "+itMonths[month]+".");
+						if (i == 2){
+							console.log("Nuovo appunto per SG: "+valore2+" giorno " + j + " "+itMonths[month]+".");
+						}else {
+							console.log(nomiRighe[i] + " " + frasi[valore2] + " giorno " + j + " "+itMonths[month]+".");
+						}
 					  }
 					}
 				  }
@@ -219,6 +225,8 @@
 				let url = "salvaMatrice.php"; // L'URL della pagina PHP che elabora la richiesta
 				xhr.onreadystatechange = function() {
 				  if (xhr.readyState === 4 && xhr.status === 200) {
+						copiaMatrice(matriceAttuale, matrice);
+						document.getElementById("comandi").style.display = "none";
 						alert(xhr.responseText);
 				  }
 				};
@@ -249,12 +257,14 @@
 						  //console.log("id "+id+ ", valore "+ matrice[i][j]);
 						  impostaClasse(document.getElementById(id),  matrice[i][j]);
 						  document.getElementById(id).setAttribute("valore", matrice[i][j]);
-						  if (i > 2 && (matrice[i][j] != 'S' &&  matrice[i][j] != 'D') ) {
+						  if (i != 1 && (matrice[i][j] != 'S' &&  matrice[i][j] != 'D')) {
 							document.getElementById(id).innerHTML = matrice[i][j];
 						  }
 					  }
 				  }
 			  }
+			  
+			  var timerId;
 			  
 			  function caricaFunzioni() {
 				  
@@ -263,17 +273,27 @@
 						var element = document.getElementById('scadenze-'+i); //seleziono l'elemento da modificare
 					    //console.log('scadenze-'+i+", valore della matrice "+ matrice[0][i-1]);
 						if (matrice[0][i-1] != 'S' && matrice[0][i-1] != 'D'){
-							element.onchange = function() { aggiornaMatriceAttuale(this.getAttribute('id')); }; //aggiungo la funzione onchange
+							element.oninput = function() { aggiornaMatriceAttuale(this.getAttribute('id')); }; //aggiungo la funzione onchange
 							element.setAttribute("contenteditable", "true");
 						}
 				  }
 				  
 				  //presidente
 				  for (var i = 1; i <= days; i++) {
+						const currentId = 'presidente-'+i;
 						var element = document.getElementById('presidente-'+i); //seleziono l'elemento da modificare
 					    //console.log('scadenze-'+i+", valore della matrice "+ matrice[0][i-1]);
 						if (matrice[1][i-1] != 'S' && matrice[1][i-1] != 'D'){
 							element.onclick = function() { presidenteInSede(this); }; //aggiungo la funzione click
+							element.onmousedown = function() { 
+													timerId = setInterval(function() {
+																			presidenteInSede(document.getElementById(currentId));
+															}, 500);
+												}; //aggiungo la funzione onmousedown
+							element.onmouseup = function() { clearInterval(timerId);}; //aggiungo la funzione onmouseup
+							element.onclick = function() { presidenteInSede(this); }; //aggiungo la funzione onclick
+							
+							
 						}else {
 							element.style.cursor = "auto";
 						}
@@ -284,7 +304,7 @@
 						var element = document.getElementById('sg-'+i); //seleziono l'elemento da modificare
 					    //console.log('scadenze-'+i+", valore della matrice "+ matrice[0][i-1]);
 						if (matrice[2][i-1] != 'S' && matrice[2][i-1] != 'D'){
-							element.onchange = function() { aggiornaMatriceAttuale(this.getAttribute('id')); }; //aggiungo la funzione onclick
+							element.oninput = function() { aggiornaMatriceAttuale(this.getAttribute('id')); }; //aggiungo la funzione onclick
 							element.setAttribute("contenteditable", "true");
 						}
 				  }
@@ -292,12 +312,19 @@
 				  // dipendenti
 				  for (var d = 1; d <= numDipendenti; d++){
 					   for (var i = 1; i <= days; i++) {
-							var element = document.getElementById('cella-'+d+'-'+i); //seleziono l'elemento da modificare
+						    const currentId = 'cella-'+d+'-'+i;
+							var element = document.getElementById(currentId); //seleziono l'elemento da modificare
 							//console.log('cella-'+d+'-'+i+", valore della matrice "+ matrice[d-1][i-1]);
 							if (matrice[d-1][i-1] == 'S' || matrice[d-1][i-1] == 'T'){
 								element.onclick = function() { turnoDelSabato(this); }; //aggiungo la funzione onchange
 							}else if (matrice[d-1][i-1] != 'D'){
-								element.onclick = function() { cambiaValore(this); }; //aggiungo la funzione onchange
+								element.onmousedown = function() { 
+													timerId = setInterval(function() {
+																			cambiaValore(document.getElementById(currentId));
+															}, 500);
+												}; //aggiungo la funzione onmousedown
+								element.onmouseup = function() { clearInterval(timerId);}; //aggiungo la funzione onmouseup
+								element.onclick = function() { cambiaValore(this); }; //aggiungo la funzione onclick								
 							}
 					   }
 				   }
@@ -326,18 +353,18 @@
 					  matrice = JSON.parse(xhr.responseText);
 					  caricaValori();
 					  caricaFunzioni();
-					  caricaMatriceAttuale();
+					  copiaMatrice(matrice, matriceAttuale);
 					  calcolaPercentualeUfficioIniziale();
 					}
 				  };
 			    xhr.send();
 			  }
 			  
-			  function caricaMatriceAttuale(){
+			  function copiaMatrice(sourceMatrix, destMatrix){
 				  for (var i = 0; i < numRows; i++) {
-					matriceAttuale[i]=[];
+					destMatrix[i]=[];
 					for (var j = 0; j < days; j++) {
-						matriceAttuale[i][j] = matrice[i][j];
+						destMatrix[i][j] = sourceMatrix[i][j];
 					}
 				  }
 			  }
@@ -417,7 +444,7 @@
 		  }
 		  
 		  html, body {
-			height: 100%;
+			height: 95%;
 		  }
 
 		  body {
