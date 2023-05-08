@@ -215,6 +215,23 @@
 				  return differenze;
 			  }
 			  
+			  
+			  function showSelect(selectWrapper) {
+				selectWrapper.querySelector('select').style.display = 'block';
+			  }
+			  
+			  function hideSelect(selectWrapper) {
+				if (selectWrapper.querySelector('select').value === '') {
+				  selectWrapper.querySelector('select').style.display = 'none';
+				}
+			  }
+			  
+			  function checkValue(select) {
+				if (select.value === '') {
+				  select.style.display = 'none';
+				}
+			  }
+			  
 			  function salva() {
 				confrontaMatrici(matrice, matriceAttuale);
 				inviaDati();
@@ -400,6 +417,21 @@
 				  mettiColonnaOggiInGrassetto();
 			  }
 			  
+			  
+			  function showDiv(el) { 
+				console.log('div_onmouseover'); 
+				el.parentElement.style.display='block';
+			  }
+			  
+			   function hideDiv(el) { 
+   				console.log('div_onmouseout'); 
+				el.parentElement.style.display = (el.value == '' ? 'none' : 'block');
+			   }
+			   
+			   function setSelect(el) {
+				   el.style.width = el.value == '' ? '30px' : 'auto';
+			   }
+			  
 			</script>
 
 		
@@ -474,7 +506,6 @@
 		  }
 
 		  body {
-			zoom: 0.85;
 			font-family: Calibri, sans-serif;
 			display: flex;
 			justify-content: center;
@@ -538,44 +569,31 @@
 				
 				<tr>
 				  <th>Sostituzioni</th>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
-				  <td/>
+				  <?php 
+					for ($i = 1; $i <= $days; $i++) {
+						echo "<td/>";
+					}
+				   ?>
 				  <td colspan="3">Legenda</td>
 			    </tr>
 				<tr>
+				  <?php
+					$file = 'consts/sostituzioniUR.txt';
+					$options = file($file);
+				   ?>
 				  <th>Ufficio Ricorsi</th>
 				  <?php 
 					for ($i = 1; $i <= $days; $i++) {
-						echo "<td id='ufficioRicorsi-".$i."'></td>\n";
+						echo "<td>";
+						echo ("<div style='display: none;'>");
+						echo ("<select id='ufficioRicorsi-".$i."' style='width: 30px;' onmouseover='showDiv(this);' onmouseout=hideDiv(this);' onchange='setSelect(this);'>");
+						echo"<option/>";
+						foreach ($options as $option):
+							echo"<option value=\"$option\">$option</option>";
+						endforeach;
+						echo "</select>\n";
+						echo ("</div>");
+						echo "</td>\n";
 					}
 				   ?>
 				  <td colspan="3">SW = Smart Working</td>
@@ -607,6 +625,7 @@
 				   ?>
 				  <td class="cella arancione" colspan="3">R = Recupero smart working</td>
 			    </tr>
+				
 				<tr>
 				  <th>Archivio</th>
 				  <?php 
@@ -633,6 +652,15 @@
 					}
 				   ?>
 				  <td colspan="3"/>
+			    </tr>
+				<tr>
+				  <th>Protocollo</th>
+				 <?php 
+					for ($i = 1; $i <= $days; $i++) {
+						echo "<td id='protocollo-".$i."'></td>\n";
+					}
+				   ?>
+				   <td colspan="3"/>
 			    </tr>
 				<tr id="comandi" style="display:none">
 					<td class="senza-bordi" colspan="18">
