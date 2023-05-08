@@ -418,18 +418,19 @@
 			  }
 			  
 			  
-			  function showDiv(el) { 
-				console.log('div_onmouseover'); 
-				el.parentElement.style.display='block';
+			  function showDiv(id) { 
+				console.log("showDiv("+id+") div_onmouseover"); 
+				document.getElementById(id).style.display='block';
 			  }
 			  
-			   function hideDiv(el) { 
-   				console.log('div_onmouseout'); 
-				el.parentElement.style.display = (el.value == '' ? 'none' : 'block');
+			   function hideDiv(id) { 
+   				console.log("hideDiv("+id+") div_onmouseout"); 
+				document.getElementById(id).style.display = (document.getElementById(id.replace("div", "")).value == '' ? 'none' : 'block');
 			   }
 			   
 			   function setSelect(el) {
 				   el.style.width = el.value == '' ? '30px' : 'auto';
+				   hideDiv("div"+el.id);
 			   }
 			  
 			</script>
@@ -584,9 +585,9 @@
 				  <th>Ufficio Ricorsi</th>
 				  <?php 
 					for ($i = 1; $i <= $days; $i++) {
-						echo "<td>";
-						echo ("<div style='display: none;'>");
-						echo ("<select id='ufficioRicorsi-".$i."' style='width: 30px;' onmouseover='showDiv(this);' onmouseout=hideDiv(this);' onchange='setSelect(this);'>");
+						echo "<td onmouseover='showDiv(\"divufficioRicorsi-$i\");' onmouseout='hideDiv(\"divufficioRicorsi-$i\");'>";
+						echo ("<div id='divufficioRicorsi-$i'>");
+						echo ("<select id='ufficioRicorsi-".$i."' style='width: 30px;' onchange='setSelect(this);'>");
 						echo"<option/>";
 						foreach ($options as $option):
 							echo"<option value=\"$option\">$option</option>";
