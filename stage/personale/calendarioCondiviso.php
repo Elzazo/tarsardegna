@@ -1,5 +1,7 @@
 <html>
 	<head>
+			<!-- use version 0.19.3 -->
+			<script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 			<script>
 			  var matrice = [];
 			  var matriceAttuale = [];
@@ -417,6 +419,37 @@
 				  mettiColonnaOggiInGrassetto();
 			  }
 			  
+			  function esportaExcel() {
+			  // Creazione della matrice dati
+			  var data = matriceAttuale;
+
+			  // Creazione del workbook
+			  var workbook = XLSX.utils.book_new();
+			  var sheet = XLSX.utils.aoa_to_sheet(data);
+			  XLSX.utils.book_append_sheet(workbook, sheet, 'Dati');
+
+			  // Creazione del file Excel
+			  var wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+			  // Conversione in un oggetto Blob
+			  var blob = new Blob([wbout], { type: 'application/octet-stream' });
+
+			  // Creazione del link per il download del file
+			  var url = window.URL.createObjectURL(blob);
+			  var a = document.createElement('a');
+			  a.href = url;
+			  a.download = 'dati.xlsx';
+
+			  // Aggiunta del link alla pagina e attivazione del click
+			  document.body.appendChild(a);
+			  a.click();
+
+			  // Rimozione del link dalla pagina
+			  document.body.removeChild(a);
+			  window.URL.revokeObjectURL(url);
+			}
+
+			  
 			  
 			  function showDiv(id) { 
 				console.log("showDiv("+id+") div_onmouseover"); 
@@ -503,7 +536,7 @@
 		  }
 		  
 		  html, body {
-			height: 95%;
+			height: 100%;
 		  }
 
 		  body {
@@ -586,7 +619,7 @@
 				  <?php 
 					for ($i = 1; $i <= $days; $i++) {
 						echo "<td onmouseover='showDiv(\"divufficioRicorsi-$i\");' onmouseout='hideDiv(\"divufficioRicorsi-$i\");'>";
-						echo ("<div id='divufficioRicorsi-$i'>");
+						echo ("<div id='divufficioRicorsi-$i' style='display:none'>");
 						echo ("<select id='ufficioRicorsi-".$i."' style='width: 30px;' onchange='setSelect(this);'>");
 						echo"<option/>";
 						foreach ($options as $option):
@@ -664,10 +697,13 @@
 				   <td colspan="3"/>
 			    </tr>
 				<tr id="comandi" style="display:none">
-					<td class="senza-bordi" colspan="18">
+					<td class="senza-bordi" colspan="12">
+						<button style="width:100%" onclick="esportaExcel()">Esporta in Excel</button>
+					</td>
+					<td class="senza-bordi" colspan="12">
 						<button style="width:100%" onclick="salva()">Salva</button>
-						</td>
-					<td class="senza-bordi" colspan="18">
+					</td>
+					<td class="senza-bordi" colspan="12">
 						<button style="width:100%">Annulla</button>
 					  </td>
 				</tr>
