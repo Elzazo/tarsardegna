@@ -2,30 +2,11 @@
 <html lang="it">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Login - T.A.R. Sardegna</title>
-    <meta name="description" content="Applicazioni ad uso interno del T.A.R. Sardegna">
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
-    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css">
-    <link rel="stylesheet" href="assets/css/Login-Form-Basic-icons.css">
-    <link rel="stylesheet" href="assets/css/vanilla-zoom.min.css">
+    <?php echo file_get_contents('header.html'); ?>
 </head>
 
-<body>
-    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
-        <div class="container"><i class="fas fa-gavel" style="width: 16px;font-size: 26px;"></i><a class="navbar-brand logo" href="#">&nbsp; &nbsp;T.A.R. Sardegna</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse" id="navcol-1">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="login.html">LOGIN</a></li>
-                    <li class="nav-item"><a class="nav-link" href="contatti.html">ContaTTI</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body  onload="setActiveNavBarLink('login');">
+    <?php echo file_get_contents('navbar.html'); ?>
     <main class="page testimonials">
         <section class="clean-block clean-testimonials dark" style="height: 727px;">
             <section class="position-relative py-4 py-xl-5">
@@ -57,16 +38,7 @@
             </section>
         </section>
     </main>
-    <footer class="page-footer dark">
-        <div class="footer-copyright">
-            <p>© 2022 Sviluppato da Aldo Lezza</p>
-        </div>
-    </footer>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/bs-init.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
-    <script src="assets/js/vanilla-zoom.js"></script>
-    <script src="assets/js/theme.js"></script>
+    <?php echo file_get_contents('footer.html'); ?>
 </body>
 
 </html>
