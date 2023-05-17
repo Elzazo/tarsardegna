@@ -104,6 +104,33 @@
 					  cella.classList.add("giallina");
 					}
 			  }
+			  
+			  function cambiaValoreIndietro(cella) {
+					var valoreAttuale = cella.getAttribute("valore");
+					var nuoviValori = ["R", "X","F", "SW", "A"];
+					var nuovoValore = nuoviValori[(nuoviValori.indexOf(valoreAttuale) + 1) % nuoviValori.length];
+					cella.setAttribute("valore", nuovoValore);
+					cella.innerHTML = nuovoValore;
+					
+					// Rimuovi le classi precedenti e aggiungi la nuova classe in base al valore
+					cella.classList.remove("celeste", "bianco", "verde", "gialla", "rossa", "arancione");
+					if (nuovoValore === "X" || nuovoValore === "T") {
+					  cella.classList.add("celeste");
+					} else if (nuovoValore === "A" || nuovoValore === "SW") {
+					  cella.classList.add("bianco");
+					} else if (nuovoValore === "F") {
+					  cella.classList.add("verde");
+					}else if (nuovoValore === "R") {
+					  cella.classList.add("arancione");
+					}
+					
+					var id = cella.getAttribute("id");
+					// aggiorno le percentuali solo se cambia un dipendente
+					var subStrings = cella.getAttribute("id").split("-");
+					var lastSubstring = subStrings[subStrings.length - 1];
+					calcolaPercentualeUfficio(lastSubstring);
+					aggiornaMatriceAttuale(id);
+				 }
 			
 			  function cambiaValore(cella) {
 					var valoreAttuale = cella.getAttribute("valore");
@@ -340,6 +367,7 @@
 							if (matrice[d-1][i-1] == 'S' || matrice[d-1][i-1] == 'T'){
 								element.onclick = function() { turnoDelSabato(this); }; //aggiungo la funzione onchange
 							}else if (matrice[d-1][i-1] != 'D'){
+							    element.oncontextmenu=function() {cambiaValoreIndietro(this); };
 								element.onmousedown = function() { 
 													timerId = setInterval(function() {
 																			cambiaValore(document.getElementById(currentId));
