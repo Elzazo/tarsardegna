@@ -1,5 +1,7 @@
-<html>
+<!DOCTYPE html>
+<html lang="it">
 	<head>
+			<?php echo file_get_contents(__DIR__ . '\..\..\www\header.html'); ?>
 			<!-- use version 0.19.3 -->
 			<script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 			<script>
@@ -413,10 +415,22 @@
 				
 			  }
 			  
+			  function setTitle() {
+				document.getElementById('titleId').innerHTML = "&nbsp; &nbsp;Calendario Condiviso"; 
+			  }
+			  
+			  function setShorterFooter() {
+				document.getElementsByTagName('footer')[0].style="padding:0; height: 40px;";
+				document.getElementById('footerDiv').style="margin:0";
+			  }
+			  
 			  function start(){
 				  caricaNumeroGiorniLavorativi();
 				  processaMatrice();
 				  mettiColonnaOggiInGrassetto();
+				  setActiveNavBarLink('aree');
+				  setShorterFooter();
+				  setTitle();
 			  }
 			  
 			  function esportaExcel() {
@@ -523,6 +537,7 @@
 		  
 		  table {
 			border-collapse: collapse;
+			font-family: Calibri, sans-serif;
 		  }
 
 		  td, th {
@@ -535,22 +550,26 @@
 			border-bottom: none;
 		  }
 		  
-		  html, body {
+		  /* html, body {
 			height: 100%;
-		  }
+		  } */
 
 		  body {
-			font-family: Calibri, sans-serif;
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			height:100%;
 		  }
+		  
 		</style>
 
 	</head>
 	
-	<body onload="start();">
-		<table id="calendarTable">
+	<body onload="start();" style="display: block;position: static;overflow: visible;">
+	<?php echo file_get_contents(__DIR__ . '\..\..\www\navbar.html'); ?>
+	<main class="page landing-page">
+		<center>
+		<table id="calendarTable" style="margin-top: 10px;">
 			  <thead>
 				<tr>
 				  <th>01/05/2023 - 31/05/2023</th>
@@ -710,7 +729,10 @@
 				
 				
 			</tbody>
-		</table>	
+		</table>
+		</center>
+		</main>
+		<?php  echo file_get_contents(__DIR__ . '\..\..\www\footer.html'); ?>
 	</body>
 	
 </html>

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
     <?php echo file_get_contents('header.html'); ?>
 	<style>
@@ -17,9 +16,9 @@
 		 <div class="row" style="margin-top: 20px;  margin-bottom: 20px;">
 			  <div class="col-3">
 				<div class="card">
-				  <img src="assets/img/cardImg/calendario.jpg" class="card-img-top" alt="Calendario">
+				  <a href="../stage/personale/calendarioCondiviso.php"><img src="assets/img/cardImg/calendario.jpg" class="card-img-top" alt="Calendario"></a>
 				  <div class="card-body">
-					<center><h5 class="card-title" style="color: rgba(9, 162, 255, 0.85);">Calendario</h5></center>
+					<center><p class="h5 card-title"style="color: rgba(9, 162, 255, 0.85);">Calendario</p> <!--h5 class="card-title" style="color: rgba(9, 162, 255, 0.85);">Calendario</h5--></center>
 				  </div>
 				</div>
 			  </div>
