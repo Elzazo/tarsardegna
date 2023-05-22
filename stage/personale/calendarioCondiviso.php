@@ -517,7 +517,7 @@
 			  
 			   function hideDiv(id) { 
    				console.log("hideDiv("+id+") div_onmouseout"); 
-				document.getElementById(id).style.display = (document.getElementById(id.replace("div", "")).value == '' ? 'none' : 'block');
+				document.getElementById(id).style.display = (document.getElementById(id.replace("div", "select")).value == '' ? 'none' : 'block');
 			   }
 			   
 			   function setSelect(el) {
@@ -578,6 +578,13 @@
 		  .arancione {
 			background-color: orange;
 			color: white;
+		  }
+		  
+		  .cella-lime-contorno {
+			  border-top: 5px solid lime;
+			  border-left: 5px solid lime;
+			  border-right: 5px solid lime;
+			  border-bottom: 5px solid lime;
 		  }
 		  
 		  table {
@@ -674,92 +681,43 @@
 				   ?>
 				  <td colspan="3">Legenda</td>
 			    </tr>
-				<tr>
 				  <?php
-					$file = 'consts/sostituzioniUR.txt';
-					$options = file($file);
-				   ?>
-				  <th>Ufficio Ricorsi</th>
-				  <?php 
-					for ($i = 1; $i <= $days; $i++) {
-						echo "<td onmouseover='showDiv(\"divufficioRicorsi-$i\");' onmouseout='hideDiv(\"divufficioRicorsi-$i\");'>";
-						echo ("<div id='divufficioRicorsi-$i' style='display:none'>");
-						echo ("<select id='ufficioRicorsi-".$i."' style='width: 30px;' onchange='setSelect(this);'>");
-						echo"<option/>";
-						foreach ($options as $option):
-							echo"<option value=\"$option\">$option</option>";
-						endforeach;
-						echo "</select>\n";
-						echo ("</div>");
-						echo "</td>\n";
+					$labels = array();
+					$trailingLabels = array();
+					$classes = array();
+					$sostituzioni = array();
+					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Ufficio Ricorsi");        array_push($trailingLabels, "SW = Smart Working");        array_push($classes, "");
+					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Segreteria Sezione I");   array_push($trailingLabels, "X = Presenza In Ufficio");   array_push($classes, "cella celeste");
+					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Segreteria Sezione II");  array_push($trailingLabels, "F = Ferie");                 array_push($classes, "cella verde");
+					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "URP");                    array_push($trailingLabels, "R = Recupero smart working");array_push($classes, "cella arancione");
+					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Archivio");               array_push($trailingLabels, "T = Smart working sabato");  array_push($classes, "cella blu");
+					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Personale");              array_push($trailingLabels, "A = Assenze a vario titolo");array_push($classes, "");
+					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Economato");              array_push($trailingLabels, "");                          array_push($classes, "");
+					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Protocollo");             array_push($trailingLabels, "Oggi");                      array_push($classes, "cella-lime-contorno");
+					$elemCount = count($labels);
+					
+					for ($idx = 0; $idx < $elemCount; $idx++) {
+						echo "<tr>";
+						echo "<th>$labels[$idx]</th>";
+						$options = file("consts/".$sostituzioni[$idx]);
+						for ($i = 1; $i <= $days; $i++) {
+							$nomeDiv = str_replace(' ', '', trim($labels[$idx])); 
+							echo "<td onmouseover='showDiv(\"div-$nomeDiv$i\");' onmouseout='hideDiv(\"div-$nomeDiv$i\");'>";
+							echo "<div id='div-$nomeDiv$i' style='display:none'>";
+							echo "<select id='select-$nomeDiv$i' style='width: 30px;' onchange='setSelect(this);'>";
+							echo "<option/>";
+							foreach ($options as $option):
+								echo "<option value=\"$option\">$option</option>";
+							endforeach;
+							echo "</select>\n";
+							echo "</div>";
+							echo "</td>\n";
+						}
+						echo "<td colspan='3' class='$classes[$idx]'>$trailingLabels[$idx]</td>";
+						echo "</tr>";
 					}
+					
 				   ?>
-				  <td colspan="3">SW = Smart Working</td>
-			    </tr>
-				<tr>
-				  <th>Segreteria Sezione I</th>
-				  <?php 
-					for ($i = 1; $i <= $days; $i++) {
-						echo "<td id='sez1-".$i."'></td>\n";
-					}
-				   ?>
-				  <td class="cella celeste" colspan="3">X = Presenza In Ufficio</td>
-			    </tr>
-				<tr>
-				  <th>Segreteria Sezione II</th>
-				  <?php 
-					for ($i = 1; $i <= $days; $i++) {
-						echo "<td id='sez2-".$i."'></td>\n";
-					}
-				   ?>
-				  <td class="cella verde" colspan="3">F = Ferie</td>
-			    </tr>
-				<tr>
-				  <th>URP</th>
-				  <?php 
-					for ($i = 1; $i <= $days; $i++) {
-						echo "<td id='urp-".$i."'></td>\n";
-					}
-				   ?>
-				  <td class="cella arancione" colspan="3">R = Recupero smart working</td>
-			    </tr>
-				
-				<tr>
-				  <th>Archivio</th>
-				  <?php 
-					for ($i = 1; $i <= $days; $i++) {
-						echo "<td id='archivio-".$i."'></td>\n";
-					}
-				   ?>
-				  <td class="cella blu" colspan="3">T = Smart working sabato</td>
-			    </tr>
-				<tr>
-				  <th>Personale</th>
-				 <?php 
-					for ($i = 1; $i <= $days; $i++) {
-						echo "<td id='personale-".$i."'></td>\n";
-					}
-				   ?>
-				  <td colspan="3">A = Assenze a vario titolo</td>
-			    </tr>
-				<tr>
-				  <th>Economato</th>
-				  <?php 
-					for ($i = 1; $i <= $days; $i++) {
-						echo "<td id='economato-".$i."'></td>\n";
-					}
-				   ?>
-				  <td colspan="3"/>
-			    </tr>
-				<tr>
-				  <th>Protocollo</th>
-				 <?php 
-					for ($i = 1; $i <= $days; $i++) {
-						echo "<td id='protocollo-".$i."'></td>\n";
-					}
-				   ?>
-				   <td colspan="3" style="border-top: 5px solid lime; border-left: 5px solid lime; border-right: 5px solid lime; border-bottom: 5px solid lime;">Oggi</td>
-			    </tr>
 				<tr id="comandi" style="display:none">
 					<!--td class="senza-bordi" colspan="12">
 						<button style="width:100%" onclick="esportaExcel()">Esporta in Excel</button>
