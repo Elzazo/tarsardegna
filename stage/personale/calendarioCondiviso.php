@@ -276,7 +276,24 @@
 				  if (xhr.readyState === 4 && xhr.status === 200) {
 						copiaMatrice(matriceAttuale, matrice);
 						document.getElementById("comandi").style.display = "none";
-						alert(xhr.responseText);
+						// Mostra l'alert di successo
+						// Creazione del div alert
+						var alert = document.createElement('div');
+						alert.id = 'myAlert';
+						alert.classList.add('alert', 'alert-success', 'fade', 'fixed-bottom');
+						alert.textContent = '-';
+
+						// Aggiunta del div alert al documento
+						document.body.appendChild(alert);
+						console.log(alert);	
+						alert.innerHTML = xhr.responseText;
+						alert.classList.add('show');
+						setTimeout(function() {
+						  alert.classList.remove('show');
+						  setTimeout(function() {
+							alert.remove();
+						  }, 3000); // Tempo di animazione del fade-out
+						}, 2000); // Durata dell'alert in millisecondi
 				  }
 				};
 				var data = "mese=" + encodeURIComponent(itMonths[month]) + "&matrice=" + encodeURIComponent(JSON.stringify(matriceAttuale));
