@@ -741,7 +741,7 @@
 						echo "<td id='protocollo-".$i."'></td>\n";
 					}
 				   ?>
-				   <td colspan="3"/>
+				   <td colspan="3" style="border-top: 5px solid lime; border-left: 5px solid lime; border-right: 5px solid lime; border-bottom: 5px solid lime;">Oggi</td>
 			    </tr>
 				<tr id="comandi" style="display:none">
 					<td class="senza-bordi" colspan="12">
