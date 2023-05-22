@@ -29,6 +29,7 @@
 					idx = parseInt(subStrings[1]) + 2;
 					day = subStrings[2];
 				}
+				//TODO: add handling of substitution				
 				day = day - 1;
 				//console.log("id: "+id+", idx="+idx+", day="+day);
 				//console.log(matriceAttuale);
@@ -513,11 +514,13 @@
 			  function showDiv(id) { 
 				console.log("showDiv("+id+") div_onmouseover"); 
 				document.getElementById(id).style.display='block';
+				aggiornaMatriceAttuale(id);
 			  }
 			  
 			   function hideDiv(id) { 
    				console.log("hideDiv("+id+") div_onmouseout"); 
 				document.getElementById(id).style.display = (document.getElementById(id.replace("div", "select")).value == '' ? 'none' : 'block');
+				aggiornaMatriceAttuale(id);
 			   }
 			   
 			   function setSelect(el) {
