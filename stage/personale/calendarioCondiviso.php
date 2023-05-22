@@ -367,7 +367,7 @@
 							if (matrice[d-1][i-1] == 'S' || matrice[d-1][i-1] == 'T'){
 								element.onclick = function() { turnoDelSabato(this); }; //aggiungo la funzione onchange
 							}else if (matrice[d-1][i-1] != 'D'){
-							    element.oncontextmenu=function() {cambiaValoreIndietro(this); };
+							    element.oncontextmenu=function(e) {e.preventDefault(); cambiaValoreIndietro(this); };
 								element.onmousedown = function() { 
 													timerId = setInterval(function() {
 																			cambiaValore(document.getElementById(currentId));
