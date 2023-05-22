@@ -744,15 +744,15 @@
 				   <td colspan="3" style="border-top: 5px solid lime; border-left: 5px solid lime; border-right: 5px solid lime; border-bottom: 5px solid lime;">Oggi</td>
 			    </tr>
 				<tr id="comandi" style="display:none">
-					<td class="senza-bordi" colspan="12">
+					<!--td class="senza-bordi" colspan="12">
 						<button style="width:100%" onclick="esportaExcel()">Esporta in Excel</button>
+					</td-->
+					<td class="senza-bordi" colspan="18">
+						<button style="width:100%" class="btn btn-secondary">Annulla</button>
 					</td>
-					<td class="senza-bordi" colspan="12">
-						<button style="width:100%" onclick="salva()">Salva</button>
+					<td class="senza-bordi" colspan="18">
+						<button style="width:100%" class="btn btn-primary" onclick="salva()">Salva</button>
 					</td>
-					<td class="senza-bordi" colspan="12">
-						<button style="width:100%">Annulla</button>
-					  </td>
 				</tr>
 				
 				
