@@ -32,7 +32,7 @@
 			  </div>
 			  <div class="col-3">
 				<div class="card">
-				  <img src="assets/img/cardImg/contabilita.jpg" class="card-img-top" alt="Contabilità">
+				  <a href="contabilita.php"><img src="assets/img/cardImg/contabilita.jpg" class="card-img-top" alt="Contabilità"></a>
 				  <div class="card-body">
 					<center><h5 class="card-title" style="color: rgba(9, 162, 255, 0.85);">Contabilità</h5></center>
 				  </div>
