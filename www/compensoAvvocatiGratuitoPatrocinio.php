@@ -52,7 +52,7 @@
 						  <tbody>
 							<tr>
 							  <td>Onorario</td>
-							  <td><input type="number" min="0.0" class="form-control numeric-input" onchange="calcola(this.value);" onkeyup="calcola(this.value);" value="0.00"></td>
+							  <td><input type="number" min="0.0" class="form-control numeric-input" onchange="calcola(this.value);" onkeyup="calcola(this.value);" value="0.00" data-toggle="tooltip" data-placement="right" title="Usare la virgola per separare i decimali e NON usare il punto per separare le migliaia"></td>
 							</tr>
 							<tr>
 							  <td>Spese (15% onorario)</td>
