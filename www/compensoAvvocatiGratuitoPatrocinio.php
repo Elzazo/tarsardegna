@@ -14,27 +14,27 @@
 	<script>
 	function calcola (onorario) {
 		onorario = parseFloat(onorario);
-		console.log(onorario);
+		//console.log(onorario);
 		var spese = onorario * 0.15;
 		if (isNaN(spese)){
 			return calcola (0);
 		}
-		console.log(spese);
+		//console.log(spese);
 		document.getElementById("spese").innerHTML = spese.toFixed(2);
 		var cpa = (onorario + spese) * 0.04;
-		console.log(cpa);
+		//console.log(cpa);
 		document.getElementById("cpa").innerHTML = cpa.toFixed(2);
 		var iva = (onorario + spese + cpa) * 0.22;
-		console.log(iva);
+		//console.log(iva);
 		document.getElementById("iva").innerHTML = iva.toFixed(2);
 		var ritenuta = (onorario + spese) * 0.20;
-		console.log(ritenuta);
+		//console.log(ritenuta);
 		document.getElementById("ritenuta").innerHTML = ritenuta.toFixed(2);
 		var totale = (onorario + spese + cpa + iva);
-		console.log(totale);
+		//console.log(totale);
 		document.getElementById("totale").innerHTML = totale.toFixed(2);
 		var netto = (totale - ritenuta);
-		console.log(netto);
+		//console.log(netto);
 		document.getElementById("netto").innerHTML = netto.toFixed(2);
 	}
 	</script>
@@ -52,7 +52,7 @@
 						  <tbody>
 							<tr>
 							  <td>Onorario</td>
-							  <td><input type="number" min="0.0" class="form-control numeric-input" onchange="calcola(this.value);" onkeyup="calcola(this.value);"></td>
+							  <td><input type="number" min="0.0" class="form-control numeric-input" onchange="calcola(this.value);" onkeyup="calcola(this.value);" value="0.00"></td>
 							</tr>
 							<tr>
 							  <td>Spese (15% onorario)</td>
