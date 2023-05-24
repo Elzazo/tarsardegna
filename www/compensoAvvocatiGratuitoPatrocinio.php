@@ -8,7 +8,7 @@
 		}
 		
 		.align-right {
-			text-align: right;
+			text-align: center;
 		}
 		
 		.bold {
@@ -51,7 +51,7 @@
 		<div class="container">
 			 <center style="margin-top: 10px;"><h5 class="card-title" style="color: rgba(9, 162, 255, 0.85);">Calcolo Compenso Avvocati Gratuito Patrocinio</h5></center></center>
 			 <center>
-				 <div class="col-4" style="margin-top: 10px;">
+				 <div class="col-3" style="margin-top: 10px;">
 					 <table class="table table-bordered table-striped" style="margin-top: 10px;">
 						  <tbody>
 							<tr>

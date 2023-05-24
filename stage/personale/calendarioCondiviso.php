@@ -113,14 +113,14 @@
 					$trailingLabels = array();
 					$classes = array();
 					$sostituzioni = array();
-					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Ufficio Ricorsi");        array_push($trailingLabels, "SW = Smart Working");        array_push($classes, "");
-					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Segreteria Sezione I");   array_push($trailingLabels, "X = Presenza In Ufficio");   array_push($classes, "cella celeste");
-					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Segreteria Sezione II");  array_push($trailingLabels, "F = Ferie");                 array_push($classes, "cella verde");
-					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "URP");                    array_push($trailingLabels, "R = Recupero smart working");array_push($classes, "cella arancione");
-					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Archivio");               array_push($trailingLabels, "T = Smart working sabato");  array_push($classes, "cella blu");
-					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Personale");              array_push($trailingLabels, "A = Assenze a vario titolo");array_push($classes, "");
-					array_push($sostituzioni, "sostituzioniUR.txt"); array_push($labels, "Economato");              array_push($trailingLabels, "");                          array_push($classes, "");
-					array_push($sostituzioni, "sostituzioniProtocollo.txt"); array_push($labels, "Protocollo");             array_push($trailingLabels, "Oggi");                      array_push($classes, "cella-lime-contorno");
+					array_push($sostituzioni, "sostituzioniUR.txt");   array_push($labels, "Ufficio Ricorsi");        array_push($trailingLabels, "SW = Smart Working");        array_push($classes, "");
+					array_push($sostituzioni, "sostituzioniSeg1.txt"); array_push($labels, "Segreteria Sezione I");   array_push($trailingLabels, "X = Presenza In Ufficio");   array_push($classes, "cella celeste");
+					array_push($sostituzioni, "sostituzioniSeg2.txt"); array_push($labels, "Segreteria Sezione II");  array_push($trailingLabels, "F = Ferie");                 array_push($classes, "cella verde");
+					array_push($sostituzioni, "sostituzioniURP.txt");  array_push($labels, "URP");                    array_push($trailingLabels, "R = Recupero smart working");array_push($classes, "cella arancione");
+					array_push($sostituzioni, "sostituzioniArc.txt");  array_push($labels, "Archivio");               array_push($trailingLabels, "T = Smart working sabato");  array_push($classes, "cella blu");
+					array_push($sostituzioni, "sostituzioniPer.txt");  array_push($labels, "Personale");              array_push($trailingLabels, "A = Assenze a vario titolo");array_push($classes, "");
+					array_push($sostituzioni, "sostituzioniEco.txt");  array_push($labels, "Economato");              array_push($trailingLabels, "");                          array_push($classes, "");
+					array_push($sostituzioni, "sostituzioniPro.txt");  array_push($labels, "Protocollo");             array_push($trailingLabels, "Oggi");                      array_push($classes, "cella-lime-contorno");
 					$elemCount = count($labels);
 					
 					for ($idx = 0; $idx < $elemCount; $idx++) {
@@ -129,9 +129,9 @@
 						$options = file("consts/".$sostituzioni[$idx]);
 						for ($i = 1; $i <= $days; $i++) {
 							$nomeDiv = str_replace(' ', '', trim($labels[$idx])); 
-							echo "<td onmouseover='showDiv(\"div-$nomeDiv$i\");' onmouseout='hideDiv(\"div-$nomeDiv$i\");'>";
-							echo "<div id='div-$nomeDiv$i' style='display:none'>";
-							echo "<select id='select-$nomeDiv$i' style='width: 30px;' onchange='setSelect(this);'>";
+							echo "<td onmouseover='showDiv(\"div-$nomeDiv-$i\");' onmouseout='hideDiv(\"div-$nomeDiv-$i\");'>";
+							echo "<div id='div-$nomeDiv-$i' style='display:none'>";
+							echo "<select id='select-$nomeDiv-$i' style='width: 30px;' onchange='setSelect(this);'>";
 							echo "<option/>";
 							foreach ($options as $option):
 								echo "<option value=\"$option\">$option</option>";

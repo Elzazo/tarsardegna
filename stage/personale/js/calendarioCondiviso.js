@@ -16,19 +16,35 @@
 	frasi["SW"]="sarà in smart working";
 	frasi["R"]="sarà in recupero turno del sabato";
 	
+	var indiciTabella = new Map();
+	indiciTabella.set('presidente', 1);
+	indiciTabella.set('sg', 2);
+	// cella sarà gestito a parte
+	indiciTabella.set('UfficioRicorsi', 1 + numDipendenti);      
+	indiciTabella.set('SegreteriaSezioneII', 3 + numDipendenti);      
+	indiciTabella.set('SegreteriaSezioneI', 2 + numDipendenti);      
+	indiciTabella.set('URP', 4 + numDipendenti);      
+	indiciTabella.set('Archivio', 5 + numDipendenti);      
+	indiciTabella.set('Personale', 6 + numDipendenti);      
+	indiciTabella.set('Economato', 7 + numDipendenti);      
+	indiciTabella.set('Protocollo', 8 + numDipendenti);         
+	
+	function getMatrixIdxFromElementId(id){
+		for (let key of indiciTabella.keys()) {
+		  if (id.indexOf(key) !== -1){
+			  console.log("getMatrixIdxFromElementId("+id+"): chiave trovata: "+key+", ritorno "+indiciTabella.get(key));
+			  return indiciTabella.get(key);
+		  }
+		}
+		console.log("getMatrixIdxFromElementId("+id+"): nessuna corrispondenza trovata.");
+		return 0;
+	}
+	
+	
 	function aggiornaMatriceAttuale(id) {
 		var actualFn = "aggiornaMatriceAttuale("+id+")";
-		var idx = 0; var day = id.split("-")[1]; 
-		if (id.indexOf("presidente")!== -1) {
-			//console.log("Presidente da aggiornare");
-			idx = 1;
-		}else if (id.indexOf("sg")!== -1) {
-			idx = 2;
-		}else if (id.indexOf("cella")!== -1) {
-			var subStrings = id.split("-");
-			idx = parseInt(subStrings[1]) + 2;
-			day = subStrings[2];
-		}
+		var idx = getMatrixIdxFromElementId(id); var day = id.split("-")[1];
+		//TODO: test getMatrixIdxFromElementId call
 		//TODO: add handling of substitution				
 		day = day - 1;
 		//console.log("id: "+id+", idx="+idx+", day="+day);
