@@ -151,9 +151,10 @@
 							echo "<div id='div-$nomeDiv-$i' style='display:none' valore=''>";
 							echo "<select id='select-$nomeDiv-$i' style='width: 30px;' onchange='setSelect(this);'>";
 							echo "<option/>";
-							foreach ($options as $option):
-								echo "<option value=\"$option\"  valore=\"$option\" >$option</option>";
-							endforeach;
+							foreach ($options as $option){
+								$trimmedOption = trim($option);
+								echo "<option value=\"$trimmedOption\"  valore=\"$trimmedOption\" >$trimmedOption</option>";
+							}
 							echo "</select>\n";
 							echo "</div>";
 							echo "</td>\n";

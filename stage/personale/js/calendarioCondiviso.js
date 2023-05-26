@@ -20,14 +20,14 @@
 	indiciTabella.set('presidente', 1);
 	indiciTabella.set('sg', 2);
 	// cella sarà gestito a parte
-	indiciTabella.set('UfficioRicorsi', 1 + numDipendenti + 3);      
-	indiciTabella.set('SegreteriaSezioneII', 3 + numDipendenti + 3);      
-	indiciTabella.set('SegreteriaSezioneI', 2 + numDipendenti + 3);      
-	indiciTabella.set('URP', 4 + numDipendenti  + 3);      
-	indiciTabella.set('Archivio', 5 + numDipendenti + 3);      
-	indiciTabella.set('Personale', 6 + numDipendenti + 3);      
-	indiciTabella.set('Economato', 7 + numDipendenti + 3);      
-	indiciTabella.set('Protocollo', 8 + numDipendenti + 3);         
+	indiciTabella.set('UfficioRicorsi',  numDipendenti + 3);      
+	indiciTabella.set('SegreteriaSezioneII', 2 + numDipendenti + 3);      
+	indiciTabella.set('SegreteriaSezioneI', 1 + numDipendenti + 3);      
+	indiciTabella.set('URP', 3 + numDipendenti  + 3);      
+	indiciTabella.set('Archivio', 4 + numDipendenti + 3);      
+	indiciTabella.set('Personale', 5 + numDipendenti + 3);      
+	indiciTabella.set('Economato', 6 + numDipendenti + 3);      
+	indiciTabella.set('Protocollo', 7 + numDipendenti + 3);         
 	
 	function getMatrixIdxFromElementId(id){
 		for (let key of indiciTabella.keys()) {
@@ -114,7 +114,24 @@
 		}
 	  }
 	  
+	  function impostaValore(id, nuovoValore){
+		  console.log("impostaValore("+id+", "+nuovoValore+")");
+		  document.getElementById(id).setAttribute("valore", nuovoValore);
+		  if (id.startsWith("div")) {
+			  var selectId = id.replace("div", "select");
+			  document.getElementById(selectId).value = nuovoValore;
+			  nuovoValore == '' ? hideDiv(id) : showDiv(id);
+			  if (nuovoValore != ''){
+				  document.getElementById(selectId).style.width = 'auto';
+			  }
+		  }
+	  }
+	  
 	  function impostaClasse(cella, nuovoValore){
+		    console.log("impostaClasse("+cella+","+nuovoValore+")");
+		    if (cella.id.startsWith("div")) {
+				return;
+			}
 			cella.classList.remove("celeste", "bianco", "verde", "gialla", "rossa", "arancione");
 			if (nuovoValore === "X" || nuovoValore === "T") {
 			  cella.classList.add("celeste");
@@ -227,9 +244,9 @@
 						var valore2 = matrice2[i][j];
         				differenze.push({riga: i+1, colonna: j+1, valore1: matrice1[i][j], valore2: matrice2[i][j]});
 						if (i == 2){
-							console.log("Nuovo appunto per SG: "+valore2+" giorno " + j + " "+itMonths[month]+".");
+							console.log("Nuovo appunto per SG: "+valore2+" giorno " + (j+1) + " "+itMonths[month]+".");
 						}else {
-							console.log(nomiRighe[i] + " " + frasi[valore2] + " giorno " + j + " "+itMonths[month]+".");
+							console.log(nomiRighe[i] + " " + ((frasi[valore2] === undefined) ?   "sarà eseguito da "+valore2 : frasi[valore2]) + " giorno " + (j+1) + " "+itMonths[month]+".");
 						}
 					  }
 					}
@@ -297,28 +314,36 @@
 			  
 			  function caricaValori()
 			  {
-				  let nr = matrice.length; // numero di righe
-				  let nc = matrice[0].length;
-				  for (var i = 0; i < nr; i++){
-					  var prefix = "cella-"+ (i-2);
-					  if (i == 0) {
-						  prefix = "scadenze";
-					  }else if (i == 1){
-						  prefix = "presidente";
-					  }else if (i == 2){
-						  prefix = "sg";
-					  }
-					  prefix = prefix + "-";
+				    var nomiDiv = []; 
+					nomiDiv[0]="scadenze-";
+					nomiDiv[1]="presidente-";
+					nomiDiv[2]="sg-";
+					for (var i = 3; i < 16; i++) {
+					  nomiDiv[i] = "cella-"+ (i-2) + "-";
+					}
+					
+					nomiDiv[16]="div-UfficioRicorsi-";
+					nomiDiv[17]="div-SegreteriaSezioneI-";
+					nomiDiv[18]="div-SegreteriaSezioneII-";
+					nomiDiv[19]="div-URP-";
+					nomiDiv[20]="div-Archivio-";
+					nomiDiv[21]="div-Personale-";
+					nomiDiv[22]="div-Economato-";
+					nomiDiv[23]="div-Protocollo-";
+					let nr = matrice.length; // numero di righe
+					let nc = matrice[0].length;
+					for (var i = 0; i < nr; i++){
+					  var prefix = nomiDiv[i];
 					  for (var j = 0; j < nc; j++){
 						  var id = prefix+(j+1);
-						  //console.log("id "+id+ ", valore "+ matrice[i][j]);
+						  console.log("caricaValori() id "+id+ ", valore "+ matrice[i][j]);
 						  impostaClasse(document.getElementById(id),  matrice[i][j]);
-						  document.getElementById(id).setAttribute("valore", matrice[i][j]);
-						  if (i != 1 && (matrice[i][j] != 'S' &&  matrice[i][j] != 'D')) {
+						  impostaValore(id, matrice[i][j]);
+						  if (i != 1  && i < 16 && (matrice[i][j] != 'S' &&  matrice[i][j] != 'D')) {
 							document.getElementById(id).innerHTML = matrice[i][j];
 						  }
 					  }
-				  }
+					}
 			  }
 			  
 			  var timerId;
