@@ -80,8 +80,14 @@
 			console.log(actualFn + "valore da attuale:"+matriceAttuale[idx][day]);
 			matriceAttuale[idx][day]=document.getElementById(id).getAttribute("valore");
 		}
-		
-		var diff = confrontaMatrici(matrice, matriceAttuale).length;
+		var comparisonResult = confrontaMatrici(matrice, matriceAttuale);
+		var diff = comparisonResult.length;
+		var newText = "Rilevat"+ (diff == 1 ? "a": "e") + " <strong>" +diff+ "</strong> variazion"+ (diff == 1 ? "e": "i") +"<br><br>"; 
+		console.log(comparisonResult);
+		for (var i=0; i < diff; i++){
+			newText = newText + comparisonResult[i].log + "<br>" ;
+		}
+		setSaveModalBody(newText);
 		//console.log("Differenze rilevate:" + diff);
 		document.getElementById("comandi").style.display = (diff > 0)  ?  "table-row" : "none";
 	  }
@@ -126,7 +132,7 @@
 	  }
 	  
 	  function impostaValore(id, nuovoValore){
-		  console.log("impostaValore("+id+", "+nuovoValore+")");
+		  //console.log("impostaValore("+id+", "+nuovoValore+")");
 		  document.getElementById(id).setAttribute("valore", nuovoValore);
 		  if (id.startsWith("div")) {
 			  var selectId = id.replace("div", "select");
@@ -139,7 +145,7 @@
 	  }
 	  
 	  function impostaClasse(cella, nuovoValore){
-		    console.log("impostaClasse("+cella+","+nuovoValore+")");
+		    //console.log("impostaClasse("+cella+","+nuovoValore+")");
 		    if (cella.id.startsWith("div")) {
 				return;
 			}
@@ -254,12 +260,14 @@
 						var valore1 = matrice1[i][j];
 						var valore2 = matrice2[i][j];
 						console.log("confrontaMatrici ["+i+"]["+j+"] vecchio valore:"+matrice1[i][j]+", nuovo valore:"+matrice2[i][j]);
-        				differenze.push({riga: i+1, colonna: j+1, valore1: matrice1[i][j], valore2: matrice2[i][j]});
+						var log; 
 						if (i == 2){
-							console.log("Nuovo appunto per SG: "+valore2+" giorno " + (j+1) + " "+itMonths[month]+".");
+							log = ("Nuovo appunto per SG: "+valore2+" giorno " + (j+1) + " "+itMonths[month]+".");
 						}else {
-							console.log(nomiRighe[i] + " " + ((frasi[valore2] === undefined) ?   "sarà eseguito da "+valore2 : frasi[valore2]) + " giorno " + (j+1) + " "+itMonths[month]+".");
+							log = (nomiRighe[i] + " " + ((frasi[valore2] === undefined) ?   "sarà eseguito da "+valore2 : frasi[valore2]) + " giorno " + (j+1) + " "+itMonths[month]+".");
 						}
+						console.log(log);
+        				differenze.push({riga: i+1, colonna: j+1, valore1: matrice1[i][j], valore2: matrice2[i][j], log: log});
 					  }
 					}
 				  }
@@ -284,7 +292,6 @@
 			  }
 			  
 			  function salva() {
-				confrontaMatrici(matrice, matriceAttuale);
 				inviaDati();
 			  }
 			  
@@ -348,7 +355,7 @@
 					  var prefix = nomiDiv[i];
 					  for (var j = 0; j < nc; j++){
 						  var id = prefix+(j+1);
-						  console.log("caricaValori() id "+id+ ", valore "+ matrice[i][j]);
+						  //console.log("caricaValori() id "+id+ ", valore "+ matrice[i][j]);
 						  impostaClasse(document.getElementById(id),  matrice[i][j]);
 						  impostaValore(id, matrice[i][j]);
 						  if (i != 1  && i < 16 && (matrice[i][j] != 'S' &&  matrice[i][j] != 'D')) {

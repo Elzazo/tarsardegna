@@ -169,10 +169,10 @@
 						<button style="width:100%" onclick="esportaExcel()">Esporta in Excel</button>
 					</td-->
 					<td class="senza-bordi" colspan="18">
-						<button style="width:100%" class="btn btn-secondary">Annulla</button>
+						<button style="width:100%" class="btn btn-secondary" onclick="location.reload();">Annulla</button>
 					</td>
 					<td class="senza-bordi" colspan="18">
-						<button style="width:100%" class="btn btn-primary" onclick="salva()">Salva</button>
+						<button style="width:100%" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Salva</button> <!-- onclick="salva()" -->
 					</td>
 				</tr>
 				
