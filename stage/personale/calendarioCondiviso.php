@@ -15,25 +15,42 @@
 				$handle = fopen("consts/nomiRighe.txt", "r");
 				$nomiRighe = array();
 				// Verifichiamo se il file è stato aperto correttamente
-				if ($handle) {
+				{
 					$i = 0;
-					// Leggiamo il file riga per riga
-					while (($line = fgets($handle)) !== false) {
-						// Rimuoviamo gli spazi e il newline dalla riga letta
-						$line = trim($line);
-						// Assegniamo il valore della riga all'elemento corrispondente dell'array JS
-						echo "nomiRighe[$i] = '$line';\n";
-						array_push($nomiRighe, $line);
+					if ($handle) {
+						// Leggiamo il file riga per riga
+						while (($line = fgets($handle)) !== false) {
+							// Rimuoviamo gli spazi e il newline dalla riga letta
+							$line = trim($line);
+							// Assegniamo il valore della riga all'elemento corrispondente dell'array JS
+							echo "nomiRighe[$i] = '$line';\n";
+							array_push($nomiRighe, $line);
 
-						$i++;
+							$i++;
+						}
+
+						// Chiudiamo il file
+						fclose($handle);
+					} else {
+						// In caso di errore nell'apertura del file
+						echo "Impossibile aprire il file nomiRighe.txt!";
 					}
-
-					// Chiudiamo il file
-					fclose($handle);
-				} else {
-					// In caso di errore nell'apertura del file
-					echo "Impossibile aprire il file!";
+					
+					$handle = fopen("consts/nomiSostituzioni.txt", "r");
+					if ($handle) {
+						// Leggiamo il file riga per riga
+						while (($line = fgets($handle)) !== false) {
+							$line = trim($line);
+							echo "nomiRighe[$i] = '$line';\n";
+							$i++;
+						}
+					}else {
+						// In caso di errore nell'apertura del file
+						echo "Impossibile aprire il file nomiSostituzioni.txt!";
+					}
 				}
+				
+				
 				?>
 			</script>
 
@@ -128,13 +145,14 @@
 						echo "<th>$labels[$idx]</th>";
 						$options = file("consts/".$sostituzioni[$idx]);
 						for ($i = 1; $i <= $days; $i++) {
-							$nomeDiv = str_replace(' ', '', trim($labels[$idx])); 
+							$nomeDiv = str_replace(' ', '', trim($labels[$idx]));
+							$nomeDiv = str_replace('\n', '', trim($nomeDiv));
 							echo "<td onmouseover='showDiv(\"div-$nomeDiv-$i\");' onmouseout='hideDiv(\"div-$nomeDiv-$i\");'>";
-							echo "<div id='div-$nomeDiv-$i' style='display:none'>";
+							echo "<div id='div-$nomeDiv-$i' style='display:none' valore=''>";
 							echo "<select id='select-$nomeDiv-$i' style='width: 30px;' onchange='setSelect(this);'>";
 							echo "<option/>";
 							foreach ($options as $option):
-								echo "<option value=\"$option\">$option</option>";
+								echo "<option value=\"$option\"  valore=\"$option\" >$option</option>";
 							endforeach;
 							echo "</select>\n";
 							echo "</div>";

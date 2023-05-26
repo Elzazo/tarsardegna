@@ -9,12 +9,14 @@
 <link rel="stylesheet" href="assets/css/Login-Form-Basic-icons.css">
 <link rel="stylesheet" href="assets/css/vanilla-zoom.min.css">
 <script type="text/javascript">
-var linkNames = ["home", "login",  "contatti"]; //"aree",
+var linkNames = ["home", "aree",  "contatti"]; //"login",
 
 function setActiveNavBarLink(link){
 	for (var i = 0; i < linkNames.length; i++) {
 		var el = document.getElementById(linkNames[i]+"Link");
-		el.classList.remove('active');
+		if (el.classList.contains("active")){
+			el.classList.remove('active');
+		}
 	}
 	document.getElementById(link+"Link").classList.add('active');
 	

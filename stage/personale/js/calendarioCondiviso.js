@@ -20,14 +20,14 @@
 	indiciTabella.set('presidente', 1);
 	indiciTabella.set('sg', 2);
 	// cella sarà gestito a parte
-	indiciTabella.set('UfficioRicorsi', 1 + numDipendenti);      
-	indiciTabella.set('SegreteriaSezioneII', 3 + numDipendenti);      
-	indiciTabella.set('SegreteriaSezioneI', 2 + numDipendenti);      
-	indiciTabella.set('URP', 4 + numDipendenti);      
-	indiciTabella.set('Archivio', 5 + numDipendenti);      
-	indiciTabella.set('Personale', 6 + numDipendenti);      
-	indiciTabella.set('Economato', 7 + numDipendenti);      
-	indiciTabella.set('Protocollo', 8 + numDipendenti);         
+	indiciTabella.set('UfficioRicorsi', 1 + numDipendenti + 3);      
+	indiciTabella.set('SegreteriaSezioneII', 3 + numDipendenti + 3);      
+	indiciTabella.set('SegreteriaSezioneI', 2 + numDipendenti + 3);      
+	indiciTabella.set('URP', 4 + numDipendenti  + 3);      
+	indiciTabella.set('Archivio', 5 + numDipendenti + 3);      
+	indiciTabella.set('Personale', 6 + numDipendenti + 3);      
+	indiciTabella.set('Economato', 7 + numDipendenti + 3);      
+	indiciTabella.set('Protocollo', 8 + numDipendenti + 3);         
 	
 	function getMatrixIdxFromElementId(id){
 		for (let key of indiciTabella.keys()) {
@@ -40,22 +40,33 @@
 		return 0;
 	}
 	
+	function getDayFromElementId(id){
+		var day = id.split("-")[1];
+		for (let key of indiciTabella.keys()) {
+		  if (id.indexOf(key) !== -1){
+			  console.log("getDayFromElementId("+id+"): chiave trovata: "+key+", ritorno "+ (day = id.split("-")[2]));
+			  return day;
+		  }
+		}
+		console.log("getMatrixIdxFromElementId("+id+"): nessuna corrispondenza trovata.");
+		return day;
+	}
+	
 	
 	function aggiornaMatriceAttuale(id) {
-		var actualFn = "aggiornaMatriceAttuale("+id+")";
-		var idx = getMatrixIdxFromElementId(id); var day = id.split("-")[1];
+		var actualFn = "aggiornaMatriceAttuale("+id+") ";
+		var idx = getMatrixIdxFromElementId(id); var day = getDayFromElementId(id);
 		//TODO: test getMatrixIdxFromElementId call
 		//TODO: add handling of substitution				
 		day = day - 1;
-		//console.log("id: "+id+", idx="+idx+", day="+day);
+		console.log(actualFn + "id: "+id+", idx="+idx+", day="+day);
 		//console.log(matriceAttuale);
 		if (id.indexOf("scadenze")!== -1 || id.indexOf("sg") !== -1){
 			console.log(actualFn+":Aggiorno "+id.indexOf("scadenze")!== -1 ? "la scadenza" : "la nota sg" +" id "+idx+", giorno "+(day+1)+" con "+document.getElementById(id).textContent);
 			matriceAttuale[idx][day]=document.getElementById(id).textContent;
 		}else {
-			//console.log(id);
-			//console.log("valore da impostare:"+document.getElementById(id).getAttribute("valore"));
-			//console.log("valore da attuale:"+matriceAttuale[idx][day]);
+			console.log(actualFn + "valore da impostare:"+document.getElementById(id).getAttribute("valore"));
+			console.log(actualFn + "valore da attuale:"+matriceAttuale[idx][day]);
 			matriceAttuale[idx][day]=document.getElementById(id).getAttribute("valore");
 		}
 		
@@ -385,7 +396,6 @@
 					if (xhr.readyState === 4 && xhr.status === 200) {
 					  var jsonAr = JSON.parse(xhr.responseText);
 					  lavorativi = jsonAr[month-1];
-					  
 					}
 				  };
 			    xhr.send();
@@ -398,9 +408,10 @@
 				  xhr.onreadystatechange = function() {
 					if (xhr.readyState === 4 && xhr.status === 200) {
 					  matrice = JSON.parse(xhr.responseText);
+					  matriceAttuale = JSON.parse(xhr.responseText);
 					  caricaValori();
 					  caricaFunzioni();
-					  copiaMatrice(matrice, matriceAttuale);
+					  //copiaMatrice(matrice, matriceAttuale);
 					  calcolaPercentualeUfficioIniziale();
 					}
 				  };
@@ -493,17 +504,20 @@
 			  function showDiv(id) { 
 				console.log("showDiv("+id+") div_onmouseover"); 
 				document.getElementById(id).style.display='block';
-				aggiornaMatriceAttuale(id);
+				//aggiornaMatriceAttuale(id);
 			  }
 			  
 			   function hideDiv(id) { 
    				console.log("hideDiv("+id+") div_onmouseout"); 
 				document.getElementById(id).style.display = (document.getElementById(id.replace("div", "select")).value == '' ? 'none' : 'block');
-				aggiornaMatriceAttuale(id);
+				//aggiornaMatriceAttuale(id);
 			   }
 			   
 			   function setSelect(el) {
 				   el.style.width = el.value == '' ? '30px' : 'auto';
-				   hideDiv("div"+el.id);
+				   var id = el.id.replace("select", "div");
+				   document.getElementById(id).setAttribute("valore", el.value);
+				   hideDiv(id);
+				   aggiornaMatriceAttuale(id);
 			   }
 			  
