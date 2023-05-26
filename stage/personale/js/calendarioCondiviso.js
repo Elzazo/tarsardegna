@@ -30,6 +30,13 @@
 	indiciTabella.set('Protocollo', 7 + numDipendenti + 3);         
 	
 	function getMatrixIdxFromElementId(id){
+		if (id.startsWith("cella")){
+			var idx = parseInt(id.split("-")[1]);
+			idx +=2;
+			console.log("getMatrixIdxFromElementId("+id+"): Id di tipo cella, ritorno "+ idx);
+			return idx;
+		}
+		
 		for (let key of indiciTabella.keys()) {
 		  if (id.indexOf(key) !== -1){
 			  console.log("getMatrixIdxFromElementId("+id+"): chiave trovata: "+key+", ritorno "+indiciTabella.get(key));
@@ -42,6 +49,10 @@
 	
 	function getDayFromElementId(id){
 		var day = id.split("-")[1];
+		if (id.startsWith("cella")){
+			console.log("getDayFromElementId("+id+"): Id di tipo cella, ritorno "+ (day = id.split("-")[2]));
+			return day;
+		}
 		for (let key of indiciTabella.keys()) {
 		  if (id.indexOf(key) !== -1){
 			  console.log("getDayFromElementId("+id+"): chiave trovata: "+key+", ritorno "+ (day = id.split("-")[2]));
@@ -58,8 +69,8 @@
 		var idx = getMatrixIdxFromElementId(id); var day = getDayFromElementId(id);
 		//TODO: test getMatrixIdxFromElementId call
 		//TODO: add handling of substitution				
-		day = day - 1;
 		console.log(actualFn + "id: "+id+", idx="+idx+", day="+day);
+		day = day - 1;
 		//console.log(matriceAttuale);
 		if (id.indexOf("scadenze")!== -1 || id.indexOf("sg") !== -1){
 			console.log(actualFn+":Aggiorno "+id.indexOf("scadenze")!== -1 ? "la scadenza" : "la nota sg" +" id "+idx+", giorno "+(day+1)+" con "+document.getElementById(id).textContent);
@@ -242,6 +253,7 @@
 					    var nome = nomiRighe[i];
 						var valore1 = matrice1[i][j];
 						var valore2 = matrice2[i][j];
+						console.log("confrontaMatrici ["+i+"]["+j+"] vecchio valore:"+matrice1[i][j]+", nuovo valore:"+matrice2[i][j]);
         				differenze.push({riga: i+1, colonna: j+1, valore1: matrice1[i][j], valore2: matrice2[i][j]});
 						if (i == 2){
 							console.log("Nuovo appunto per SG: "+valore2+" giorno " + (j+1) + " "+itMonths[month]+".");
@@ -527,13 +539,13 @@
 			  
 			  
 			  function showDiv(id) { 
-				console.log("showDiv("+id+") div_onmouseover"); 
+				//console.log("showDiv("+id+") div_onmouseover"); 
 				document.getElementById(id).style.display='block';
 				//aggiornaMatriceAttuale(id);
 			  }
 			  
 			   function hideDiv(id) { 
-   				console.log("hideDiv("+id+") div_onmouseout"); 
+   				//console.log("hideDiv("+id+") div_onmouseout"); 
 				document.getElementById(id).style.display = (document.getElementById(id.replace("div", "select")).value == '' ? 'none' : 'block');
 				//aggiornaMatriceAttuale(id);
 			   }
