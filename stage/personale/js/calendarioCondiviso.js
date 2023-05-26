@@ -53,6 +53,15 @@
 			console.log("getDayFromElementId("+id+"): Id di tipo cella, ritorno "+ (day = id.split("-")[2]));
 			return day;
 		}
+		if (id.startsWith("presidente")){
+			console.log("getDayFromElementId("+id+"): Id di tipo presidente, ritorno "+day);
+			return day;
+		}
+		if (id.startsWith("sg")){
+			console.log("getDayFromElementId("+id+"): Id di tipo presidente, ritorno "+day);
+			return day;
+		}
+		
 		for (let key of indiciTabella.keys()) {
 		  if (id.indexOf(key) !== -1){
 			  console.log("getDayFromElementId("+id+"): chiave trovata: "+key+", ritorno "+ (day = id.split("-")[2]));
