@@ -114,7 +114,8 @@
 			for (var i=1; i<=numDipendenti; i++){
 				var cellName = "cella-"+i+"-"+day;
 				//console.log("cellname is "+cellName);
-				if (document.getElementById(cellName).getAttribute("valore") == 'X'){
+				let val = document.getElementById(cellName).getAttribute("valore");
+				if (val == 'X' || val == 'F'){
 					presenze++;
 				}
 			}
@@ -128,9 +129,10 @@
 			var pres = 0, ferie = 0, percentage = 0;
 			for (var j=1; j<=days; j++){
 				var cellName = "cella-"+i+"-"+j;
-				if (document.getElementById(cellName).getAttribute("valore") == 'X'){
+				let val = document.getElementById(cellName).getAttribute("valore");
+				if (val == 'X'){
 					pres++;
-				}else if (document.getElementById(cellName).getAttribute("valore") == 'F'){
+				}else if (val == 'F'){
 					ferie++;
 				}
 			document.getElementById("presUfficio-"+i).innerHTML = pres;
