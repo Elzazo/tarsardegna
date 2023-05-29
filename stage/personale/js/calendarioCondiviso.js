@@ -499,9 +499,9 @@
 				  // Applica lo stile
 				  cell.style = "border-left: "+size+"px  "+color+"; border-right: "+size+"px  "+color+"; ";
 				}
-				console.log("mettiColonnaOggiInGrassetto() th-"+today);
-				document.getElementById("th-"+today).style = "border-top: "+size+"px  "+color+"; border-left: "+size+"px  "+color+"; border-right: "+size+"px  "+color+"; "
-				table.rows[table.rows.length - 2].cells[colIndex].style = "border-left: "+size+"px "+color+"; border-right: "+size+"px  "+color+"; border-bottom: "+size+"px  "+color+";"
+				console.log("rimuoviColonnaOggiGrassetto() th-"+today);
+				document.getElementById("th-"+today).style = "border: "+size+"px solid black;"
+				table.rows[table.rows.length - 2].cells[colIndex].style = "border: "+size+"px solid black;"
 				
 			  }
 			  
