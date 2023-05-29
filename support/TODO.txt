@@ -1,0 +1,9 @@
+Installare Composer
+
+1) Aggiungere la root di php (es. C:\xampp\php) al path delle variabili di ambiente per l'account
+2) Testare il corretto funzionamento di php digitando php -v in un cmd
+3) Installare Composer dal setup Windows
+
+Instalare PHPMailer
+1) Portarsi sotto la cartella htdocs\tarsardegna\stage\personale e digitare composer require phpmailer/phpmailer
+2) Ora si può usare il codice require 'vendor/autoload.php';

@@ -4,6 +4,7 @@
 			<?php echo file_get_contents(__DIR__ . '\..\..\www\header.html'); ?>
 			<!-- use version 0.19.3 -->
 			<script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+			<script lang="javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 			<script>
 			  var today = <?php echo date('d'); ?>;
 			  var month = <?php echo date('m'); ?>;
@@ -53,6 +54,7 @@
 				
 				?>
 			</script>
+
 
 		
 		<style>

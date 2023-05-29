@@ -482,6 +482,29 @@
 				  }
 			  }
 			  
+			  function rimuoviColonnaOggiGrassetto(table) {
+				  
+				// si salta la prima colonna e quindi il numero del giorno è l'indice corretto  
+				var colIndex = today;
+				console.log("rimuoviColonnaOggiGrassetto() Today:"+today);
+				// Seleziona la tabella
+				var size = 1;
+				var color = "black";
+				// Itera su tutte le righe della tabella, a partire dalla seconda riga
+				for (var i = 1; i < (table.rows.length - 1); i++) { //l'ultima riga contiene i bottoni
+
+				  // Seleziona la cella corrispondente alla colonna desiderata
+				  var cell = table.rows[i].cells[colIndex];
+
+				  // Applica lo stile
+				  cell.style = "border-left: "+size+"px  "+color+"; border-right: "+size+"px  "+color+"; ";
+				}
+				console.log("mettiColonnaOggiInGrassetto() th-"+today);
+				document.getElementById("th-"+today).style = "border-top: "+size+"px  "+color+"; border-left: "+size+"px  "+color+"; border-right: "+size+"px  "+color+"; "
+				table.rows[table.rows.length - 2].cells[colIndex].style = "border-left: "+size+"px "+color+"; border-right: "+size+"px  "+color+"; border-bottom: "+size+"px  "+color+";"
+				
+			  }
+			  
 			  function mettiColonnaOggiInGrassetto() {
 				  
 				// si salta la prima colonna e quindi il numero del giorno è l'indice corretto  
@@ -575,4 +598,55 @@
 				   hideDiv(id);
 				   aggiornaMatriceAttuale(id);
 			   }
+			   
+			   
+			   function postAjaxCall(url, formData) {
+					// Creazione della richiesta Ajax
+					var xhr = new XMLHttpRequest();
+					xhr.open("POST", url, true);
+
+					// Gestione dell'evento di completamento della richiesta
+					xhr.onload = function() {
+						if (xhr.status === 200) {
+							var response = xhr.responseText;
+							// Gestisci la risposta dal server
+							console.log(response);
+						} else {
+							// Errore nella richiesta
+							console.log("Errore nella richiesta. Codice status: " + xhr.status);
+						}
+					};
+
+					// Invio della richiesta
+					xhr.send(formData);
+					
+				}
+			
+			
+			
+				function exportTableForEmail() {
+					// Ottenere il riferimento all'elemento tabella
+					var table = document.getElementById('calendarTable')
+					rimuoviColonnaOggiGrassetto(table);
+					
+
+					// Utilizzare html2canvas per catturare l'immagine del contenuto con gli stili applicati
+					html2canvas(table).then(function (canvas) {
+					  mettiColonnaOggiInGrassetto();
+					  // Convertire il canvas in un'immagine
+					  var imgData = canvas.toDataURL();
+
+					  // Creare un elemento immagine
+					  var img = document.createElement('img');
+					  img.src = imgData;
+					  
+					  
+					  var formData = new FormData();
+					  formData.append("oggetto", "Programmazione presenze ufficio");
+					  formData.append("corpo", "<html><head/><body>"+img.outerHTML+"</body></html>");
+					  
+					  postAjaxCall("sendMail.php", formData);
+					  
+					});	
+				}
 			  
