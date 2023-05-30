@@ -340,7 +340,7 @@
 				}, 2000); // Durata dell'alert in millisecondi
 		  }
 		};
-		var data = "mese=" + encodeURIComponent(itMonths[month]) + "&matrice=" + encodeURIComponent(JSON.stringify(matriceAttuale));
+		var data = "mese=" + encodeURIComponent(itMonths[month]) + "&anno="+encodeURIComponent(year)+"&matrice=" + encodeURIComponent(JSON.stringify(matriceAttuale));
 		console.log("Invio: "+data);
 		xhr.open("GET", "salvaMatrice.php?" + data, true);
 		xhr.setRequestHeader("Content-type", "application/json");
@@ -589,7 +589,7 @@
 					if (xhr.status === 200) {
 					  console.log('Ricarico con '+newMonth+" "+newYear);
 					  // Crea l'URL con la query string
-					  var currentUrl = window.location.href;
+					  var currentUrl = window.location.href.split('?')[0]; // removes any current arg
 					  var separator = currentUrl.includes('?') ? '&' : '?';
 					  var newUrl = currentUrl + separator + 'month=' + encodeURIComponent(newMonth) + '&year=' + newYear;
 
@@ -625,6 +625,39 @@
 			arrowCell.setAttribute("data-toggle", "tooltip");
 			arrowCell.setAttribute("data-placement", "top");
 			arrowCell.setAttribute("title", "Vai al mese successivo");
+			
+			
+			arrowCell.onclick = function() {
+			  let newMonth = (month + 1) % 13;
+			  let newYear = newMonth ==  0 ? year + 1: year;
+			  newMonth = newMonth == 0 ? 1 : newMonth;
+			  let monthStr = itMonths[newMonth];
+			  console.log('Richiesta di salto a '+monthStr+" "+newYear);
+			  
+				var url = "data/"+newYear+"/"+monthStr+".json";
+				var xhr = new XMLHttpRequest();
+
+				xhr.open('HEAD', url);
+				xhr.onreadystatechange = function() {
+				  if (xhr.readyState === 4) {
+					if (xhr.status === 200) {
+					  console.log('Ricarico con '+newMonth+" "+newYear);
+					  // Crea l'URL con la query string
+					  var currentUrl = window.location.href.split('?')[0]; // removes any current arg
+					  var separator = currentUrl.includes('?') ? '&' : '?';
+					  var newUrl = currentUrl + separator + 'month=' + encodeURIComponent(newMonth) + '&year=' + newYear;
+
+					   // Reindirizza alla nuova pagina con gli argomenti aggiunti
+					   window.location.href = newUrl;
+					} else {
+						document.getElementById("previousMonthNotFoundModalTitle").innerHTML = "Calendario di "+monthStr+ " " +newYear+ " non trovato.";
+					}
+				  }
+				};
+
+				xhr.send();
+				  
+				};
 			
 	  }
 	  
