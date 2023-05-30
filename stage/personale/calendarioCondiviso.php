@@ -70,7 +70,7 @@
 		<table id="calendarTable" style="margin-top: 10px;">
 			  <thead>
 				<tr>
-				  <th>01/05/2023 - 31/05/2023</th>
+				  <th id="monthThId"/>
 				  <?php for ($i = 1; $i <= $days; $i++) { echo "<th id='th-$i'>$i</th>\n";} ?>
 				  <th>%PresUfficio</th>
 				  <th>Ferie</th>
