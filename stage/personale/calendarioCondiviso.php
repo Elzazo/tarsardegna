@@ -6,9 +6,22 @@
 			<script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 			<script lang="javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 			<script>
-			  var today = <?php echo date('d'); ?>;
-			  var month = <?php echo date('m'); ?>;
-			  var year = <?php echo date('Y'); ?>;
+			  <?php
+				$defaultDay = date('d');
+				$defaultMonth = date('m');
+				$defaultYear = date('Y');
+				$day = $defaultDay; $month = $defaultMonth; $year = $defaultYear;
+				if (isset($_GET['month'])) {
+					$day = -1;
+					$month = $_GET['month'];
+					$year = $_GET['year'];
+				}
+				
+			  ?>
+			
+			  var today = <?php echo $day; ?>;
+			  var month = <?php echo $month; ?>;
+			  var year = <?php echo $year; ?>;
 			  var days = <?php $days = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y')); echo $days;  ?>; //giorni del mese
 			  <?php echo file_get_contents('js\calendarioCondiviso.js'); ?>
 			  <?php
@@ -26,7 +39,6 @@
 							// Assegniamo il valore della riga all'elemento corrispondente dell'array JS
 							echo "nomiRighe[$i] = '$line';\n";
 							array_push($nomiRighe, $line);
-
 							$i++;
 						}
 
