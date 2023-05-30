@@ -16,13 +16,11 @@
 					$month = $_GET['month'];
 					$year = $_GET['year'];
 				}
-				
 			  ?>
-			
 			  var today = <?php echo $day; ?>;
 			  var month = <?php echo $month; ?>;
 			  var year = <?php echo $year; ?>;
-			  var days = <?php $days = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y')); echo $days;  ?>; //giorni del mese
+			  <?php $days = cal_days_in_month(CAL_GREGORIAN, $month, $year);  ?>; //giorni del mese
 			  <?php echo file_get_contents('js\calendarioCondiviso.js'); ?>
 			  <?php
 				// Apriamo il file in lettura
@@ -78,122 +76,149 @@
 	<body onload="start();" style="display: block;position: static;overflow: visible;">
 	<?php echo file_get_contents(__DIR__ . '\..\..\www\navbar.html'); ?>
 	<main class="page landing-page">
-		<center>
-		<table id="calendarTable" style="margin-top: 10px;">
-			  <thead>
-				<tr>
-				  <th id="monthThId"/>
-				  <?php for ($i = 1; $i <= $days; $i++) { echo "<th id='th-$i'>$i</th>\n";} ?>
-				  <th>%PresUfficio</th>
-				  <th>Ferie</th>
-				  <th>%PresIndividuale</th>
-				</tr>
-			  </thead>
-			  <tbody>
-			  <?php 
-					foreach ($nomiRighe as $key => $value) {
-						echo "<tr>\n";
-						echo "<th>$value</th>\n";
-						if (0 == $key) {
+		<!--center-->
+			<div style="margin-top: 10px">
+				<table id="calendarTable" style="margin: 0 auto;">
+					  <thead>
+						<tr>
+						  <th id="monthThId"/>
+						  <?php for ($i = 1; $i <= $days; $i++) { echo "<th id='th-$i'>$i</th>\n";} ?>
+						  <th>%PresUfficio</th>
+						  <th>Ferie</th>
+						  <th>%PresIndividuale</th>
+						</tr>
+					  </thead>
+					  <tbody>
+					  <?php 
+							foreach ($nomiRighe as $key => $value) {
+								echo "<tr>\n";
+								echo "<th>$value</th>\n";
+								if (0 == $key) {
+									for ($i = 1; $i <= $days; $i++) {
+										echo "<td id='scadenze-".$i."'/>";
+									}
+								}else if (1 == $key) {
+									for ($i = 1; $i <= $days; $i++) {
+										echo "<td id='presidente-".$i."' class='cella'/>";
+									}
+								}else if (2 == $key) {
+									for ($i = 1; $i <= $days; $i++) {
+										echo "<td id='sg-".$i."'/>";
+									}
+								}else {
+									for ($i = 1; $i <= $days; $i++) {
+										echo "<td class='cella' id='cella-".($key-2)."-".$i."'></td>\n";
+									}
+									echo "<td id='presUfficio-".($key-2)."'/>\n";
+									echo "<td id='ferie-".($key-2)."'/>\n";
+									echo "<td id='percPresInd-".($key-2)."'/>";
+								}
+								if (3 > $key){
+									echo "<td/><td/><td/>";
+								}
+								echo "</tr>\n";
+							}
+						?>
+						<tr>
+						  <th>% pres. Uff. giorn. Tot</th>
+						  <?php 
 							for ($i = 1; $i <= $days; $i++) {
-								echo "<td id='scadenze-".$i."'/>";
+								echo "<td id='percentualeUfficio-".$i."'></td>\n";
 							}
-						}else if (1 == $key) {
+						   ?>
+						  <td/><td/><td/>
+						</tr>
+						
+						<tr>
+						  <th>Sostituzioni</th>
+						  <?php 
 							for ($i = 1; $i <= $days; $i++) {
-								echo "<td id='presidente-".$i."' class='cella'/>";
+								echo "<td/>";
 							}
-						}else if (2 == $key) {
-							for ($i = 1; $i <= $days; $i++) {
-								echo "<td id='sg-".$i."'/>";
+						   ?>
+						  <td colspan="3">Legenda</td>
+						</tr>
+						  <?php
+							$labels = array();
+							$trailingLabels = array();
+							$classes = array();
+							$sostituzioni = array();
+							array_push($sostituzioni, "sostituzioniUR.txt");   array_push($labels, "Ufficio Ricorsi");        array_push($trailingLabels, "SW = Smart Working");        array_push($classes, "");
+							array_push($sostituzioni, "sostituzioniSeg1.txt"); array_push($labels, "Segreteria Sezione I");   array_push($trailingLabels, "X = Presenza In Ufficio");   array_push($classes, "cella celeste");
+							array_push($sostituzioni, "sostituzioniSeg2.txt"); array_push($labels, "Segreteria Sezione II");  array_push($trailingLabels, "F = Ferie");                 array_push($classes, "cella verde");
+							array_push($sostituzioni, "sostituzioniURP.txt");  array_push($labels, "URP");                    array_push($trailingLabels, "R = Recupero smart working");array_push($classes, "cella arancione");
+							array_push($sostituzioni, "sostituzioniArc.txt");  array_push($labels, "Archivio");               array_push($trailingLabels, "T = Smart working sabato");  array_push($classes, "cella blu");
+							array_push($sostituzioni, "sostituzioniPer.txt");  array_push($labels, "Personale");              array_push($trailingLabels, "A = Assenze a vario titolo");array_push($classes, "");
+							array_push($sostituzioni, "sostituzioniEco.txt");  array_push($labels, "Economato");              array_push($trailingLabels, "");                          array_push($classes, "");
+							array_push($sostituzioni, "sostituzioniPro.txt");  array_push($labels, "Protocollo");             array_push($trailingLabels, "Oggi");                      array_push($classes, "cella-lime-contorno");
+							$elemCount = count($labels);
+							
+							for ($idx = 0; $idx < $elemCount; $idx++) {
+								echo "<tr>";
+								echo "<th>$labels[$idx]</th>";
+								$options = file("consts/".$sostituzioni[$idx]);
+								for ($i = 1; $i <= $days; $i++) {
+									$nomeDiv = str_replace(' ', '', trim($labels[$idx]));
+									$nomeDiv = str_replace('\n', '', trim($nomeDiv));
+									echo "<td onmouseover='showDiv(\"div-$nomeDiv-$i\");' onmouseout='hideDiv(\"div-$nomeDiv-$i\");'>";
+									echo "<div id='div-$nomeDiv-$i' style='display:none' valore=''>";
+									echo "<select id='select-$nomeDiv-$i' style='width: 30px;' onchange='setSelect(this);'>";
+									echo "<option/>";
+									foreach ($options as $option){
+										$trimmedOption = trim($option);
+										echo "<option value=\"$trimmedOption\"  valore=\"$trimmedOption\" >$trimmedOption</option>";
+									}
+									echo "</select>\n";
+									echo "</div>";
+									echo "</td>\n";
+								}
+								echo "<td colspan='3' class='$classes[$idx]'>$trailingLabels[$idx]</td>";
+								echo "</tr>";
 							}
-						}else {
-							for ($i = 1; $i <= $days; $i++) {
-								echo "<td class='cella' id='cella-".($key-2)."-".$i."'></td>\n";
-							}
-							echo "<td id='presUfficio-".($key-2)."'/>\n";
-							echo "<td id='ferie-".($key-2)."'/>\n";
-							echo "<td id='percPresInd-".($key-2)."'/>";
-						}
-						if (3 > $key){
-							echo "<td/><td/><td/>";
-						}
-						echo "</tr>\n";
-					}
-				?>
-				<tr>
-				  <th>% pres. Uff. giorn. Tot</th>
-				  <?php 
-					for ($i = 1; $i <= $days; $i++) {
-						echo "<td id='percentualeUfficio-".$i."'></td>\n";
-					}
-				   ?>
-				  <td/><td/><td/>
-			    </tr>
-				
-				<tr>
-				  <th>Sostituzioni</th>
-				  <?php 
-					for ($i = 1; $i <= $days; $i++) {
-						echo "<td/>";
-					}
-				   ?>
-				  <td colspan="3">Legenda</td>
-			    </tr>
-				  <?php
-					$labels = array();
-					$trailingLabels = array();
-					$classes = array();
-					$sostituzioni = array();
-					array_push($sostituzioni, "sostituzioniUR.txt");   array_push($labels, "Ufficio Ricorsi");        array_push($trailingLabels, "SW = Smart Working");        array_push($classes, "");
-					array_push($sostituzioni, "sostituzioniSeg1.txt"); array_push($labels, "Segreteria Sezione I");   array_push($trailingLabels, "X = Presenza In Ufficio");   array_push($classes, "cella celeste");
-					array_push($sostituzioni, "sostituzioniSeg2.txt"); array_push($labels, "Segreteria Sezione II");  array_push($trailingLabels, "F = Ferie");                 array_push($classes, "cella verde");
-					array_push($sostituzioni, "sostituzioniURP.txt");  array_push($labels, "URP");                    array_push($trailingLabels, "R = Recupero smart working");array_push($classes, "cella arancione");
-					array_push($sostituzioni, "sostituzioniArc.txt");  array_push($labels, "Archivio");               array_push($trailingLabels, "T = Smart working sabato");  array_push($classes, "cella blu");
-					array_push($sostituzioni, "sostituzioniPer.txt");  array_push($labels, "Personale");              array_push($trailingLabels, "A = Assenze a vario titolo");array_push($classes, "");
-					array_push($sostituzioni, "sostituzioniEco.txt");  array_push($labels, "Economato");              array_push($trailingLabels, "");                          array_push($classes, "");
-					array_push($sostituzioni, "sostituzioniPro.txt");  array_push($labels, "Protocollo");             array_push($trailingLabels, "Oggi");                      array_push($classes, "cella-lime-contorno");
-					$elemCount = count($labels);
-					
-					for ($idx = 0; $idx < $elemCount; $idx++) {
-						echo "<tr>";
-						echo "<th>$labels[$idx]</th>";
-						$options = file("consts/".$sostituzioni[$idx]);
-						for ($i = 1; $i <= $days; $i++) {
-							$nomeDiv = str_replace(' ', '', trim($labels[$idx]));
-							$nomeDiv = str_replace('\n', '', trim($nomeDiv));
-							echo "<td onmouseover='showDiv(\"div-$nomeDiv-$i\");' onmouseout='hideDiv(\"div-$nomeDiv-$i\");'>";
-							echo "<div id='div-$nomeDiv-$i' style='display:none' valore=''>";
-							echo "<select id='select-$nomeDiv-$i' style='width: 30px;' onchange='setSelect(this);'>";
-							echo "<option/>";
-							foreach ($options as $option){
-								$trimmedOption = trim($option);
-								echo "<option value=\"$trimmedOption\"  valore=\"$trimmedOption\" >$trimmedOption</option>";
-							}
-							echo "</select>\n";
-							echo "</div>";
-							echo "</td>\n";
-						}
-						echo "<td colspan='3' class='$classes[$idx]'>$trailingLabels[$idx]</td>";
-						echo "</tr>";
-					}
-					
-				   ?>
-				<tr id="comandi" style="display:none">
-					<!--td class="senza-bordi" colspan="12">
-						<button style="width:100%" onclick="esportaExcel()">Esporta in Excel</button>
-					</td-->
-					<td class="senza-bordi" colspan="18">
-						<button style="width:100%" class="btn btn-secondary" onclick="location.reload();">Annulla</button>
-					</td>
-					<td class="senza-bordi" colspan="18">
-						<button style="width:100%" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Salva</button> <!-- onclick="salva()" -->
-					</td>
-				</tr>
-				
-				
-			</tbody>
-		</table>
-		</center>
+							
+						   ?>
+						<tr id="comandi" style="display:none">
+							<!--td class="senza-bordi" colspan="12">
+								<button style="width:100%" onclick="esportaExcel()">Esporta in Excel</button>
+							</td-->
+							<td class="senza-bordi" colspan="18">
+								<button style="width:100%" class="btn btn-secondary" onclick="location.reload();">Annulla</button>
+							</td>
+							<td class="senza-bordi" colspan="18">
+								<button style="width:100%" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Salva</button> <!-- onclick="salva()" -->
+							</td>
+						</tr>
+						
+						
+					</tbody>
+				</table>
+			</div>
+		<!--/center-->
+		<!-- Button trigger modal -->
+		<!--button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+		  Launch demo modal
+		</button-->
+
+		<!-- Modal -->
+		<div class="modal fade" id="previousMonthNotFoundModal" tabindex="-1" role="dialog" aria-labelledby="previousMonthNotFoundModalTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="previousMonthNotFoundModalTitle">Mese non trovato</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			  <div class="modal-body">
+				...
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		
 		</main>
 		<?php  echo file_get_contents(__DIR__ . '\..\..\www\footer.html'); ?>
 	</body>

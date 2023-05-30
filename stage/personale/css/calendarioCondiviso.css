@@ -1,83 +1,96 @@
 .cella {
-			text-align: center;
-			font-weight: bold;
-			font-size: 18px;
-			width: 30px;
-			height: 30px;
-			cursor: pointer;
-		  }
-		  
-		  .celeste {
-			background-color: #00aaff;
-			color: white;
-		  }
-		  
-		  .bianco {
-			background-color: white;
-			color: black;
-		  }
-		  
-		  .verde {
-			background-color: #00ff00;
-			color: white;
-		  }
-		  
-		  .gialla {
-			background-color: yellow;
-			color: black;
-		  }
-		  
-		  .giallina {
-			background-color: #FFD966;
-			color: black;
-		  }
-		  
-		  
-		  .rossa {
-			background-color: red;
-			color: white;
-			cursor:auto;
-		  }
-		  
-		  .blu {
-			background-color: blue;
-			color: white;
-		  }
-		  
-		  .arancione {
-			background-color: orange;
-			color: white;
-		  }
-		  
-		  .cella-lime-contorno {
-			  border-top: 5px solid lime;
-			  border-left: 5px solid lime;
-			  border-right: 5px solid lime;
-			  border-bottom: 5px solid lime;
-		  }
-		  
-		  table {
-			border-collapse: collapse;
-			font-family: Calibri, sans-serif;
-		  }
+text-align: center;
+font-weight: bold;
+font-size: 18px;
+width: 30px;
+height: 30px;
+cursor: pointer;
+}
 
-		  td, th {
-			border: 1px solid black;
-			text-align: center;
-		  }
-		  
-		  .senza-bordi td, .senza-bordi th {
-			border-top: none;
-			border-bottom: none;
-		  }
-		  
-		  /* html, body {
-			height: 100%;
-		  } */
+.celeste {
+background-color: #00aaff;
+color: white;
+}
 
-		  body {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height:100%;
-		  }
+.bianco {
+background-color: white;
+color: black;
+}
+
+.verde {
+background-color: #00ff00;
+color: white;
+}
+
+.gialla {
+background-color: yellow;
+color: black;
+}
+
+.giallina {
+background-color: #FFD966;
+color: black;
+}
+
+
+.rossa {
+background-color: red;
+color: white;
+cursor:auto;
+}
+
+.blu {
+background-color: blue;
+color: white;
+}
+
+.arancione {
+background-color: orange;
+color: white;
+}
+
+.cella-lime-contorno {
+  border-top: 5px solid lime;
+  border-left: 5px solid lime;
+  border-right: 5px solid lime;
+  border-bottom: 5px solid lime;
+}
+
+table {
+border-collapse: collapse;
+font-family: Calibri, sans-serif;
+}
+
+td, th {
+border: 1px solid black;
+text-align: center;
+}
+
+.senza-bordi td, .senza-bordi th {
+border-top: none;
+border-bottom: none;
+}
+
+/* html, body {
+height: 100%;
+} */
+
+body {
+display: flex;
+justify-content: center;
+align-items: center;
+height:100%;
+}
+
+#leftArrow,
+#rightArrow,
+{
+  background-color: lime; /* Colore di sfondo predefinito */
+  font-weight: bold;
+}
+
+#leftArrow:hover, 
+#rightArrow:hover {
+  background-color: lime; /* Colore di sfondo al passaggio del mouse */
+  font-weight: bold;
+}
