@@ -24,40 +24,35 @@
 			  <?php echo file_get_contents('js\calendarioCondiviso.js'); ?>
 			  <?php
 				// Apriamo il file in lettura
-				$handle = fopen("consts/nomiRighe.txt", "r");
 				$nomiRighe = array();
+				$labels = array();
 				// Verifichiamo se il file è stato aperto correttamente
 				{
-					$i = 0;
-					if ($handle) {
-						// Leggiamo il file riga per riga
-						while (($line = fgets($handle)) !== false) {
-							// Rimuoviamo gli spazi e il newline dalla riga letta
-							$line = trim($line);
-							// Assegniamo il valore della riga all'elemento corrispondente dell'array JS
-							echo "nomiRighe[$i] = '$line';\n";
-							array_push($nomiRighe, $line);
-							$i++;
-						}
+					$nomiFile=["intestazioni", "dipendenti", "intestazioniSostituzioni"]; //dipendenti tenuto fino alla migrazione dei nuovi json
+					$i = 0; 
+					foreach ($nomiFile as &$nomeFile) {
+						$handle = fopen("consts/".$nomeFile.".txt", "r");
+						if ($handle) {
+							// Leggiamo il file riga per riga
+							while (($line = fgets($handle)) !== false) {
+								// Rimuoviamo gli spazi e il newline dalla riga letta
+								$line = trim($line);
+								// Assegniamo il valore della riga all'elemento corrispondente dell'array JS
+								echo "nomiRighe[$i] = '$line';\n";
+								if ($nomeFile == "intestazioniSostituzioni") {
+									array_push($labels, $line);
+								}else {
+									array_push($nomiRighe, $line);
+									$i++;
+								}
+							}
 
-						// Chiudiamo il file
-						fclose($handle);
-					} else {
-						// In caso di errore nell'apertura del file
-						echo "Impossibile aprire il file nomiRighe.txt!";
-					}
-					
-					$handle = fopen("consts/nomiSostituzioni.txt", "r");
-					if ($handle) {
-						// Leggiamo il file riga per riga
-						while (($line = fgets($handle)) !== false) {
-							$line = trim($line);
-							echo "nomiRighe[$i] = '$line';\n";
-							$i++;
+							// Chiudiamo il file
+							fclose($handle);
+						} else {
+							// In caso di errore nell'apertura del file
+							echo "Impossibile aprire il file ".nomeFile.".txt!";
 						}
-					}else {
-						// In caso di errore nell'apertura del file
-						echo "Impossibile aprire il file nomiSostituzioni.txt!";
 					}
 				}
 				
@@ -139,18 +134,17 @@
 						  <td colspan="3">Legenda</td>
 						</tr>
 						  <?php
-							$labels = array();
+							$sostituzioni = array();
 							$trailingLabels = array();
 							$classes = array();
-							$sostituzioni = array();
-							array_push($sostituzioni, "sostituzioniUR.txt");   array_push($labels, "Ufficio Ricorsi");        array_push($trailingLabels, "SW = Smart Working");        array_push($classes, "");
-							array_push($sostituzioni, "sostituzioniSeg1.txt"); array_push($labels, "Segreteria Sezione I");   array_push($trailingLabels, "X = Presenza In Ufficio");   array_push($classes, "cella celeste");
-							array_push($sostituzioni, "sostituzioniSeg2.txt"); array_push($labels, "Segreteria Sezione II");  array_push($trailingLabels, "F = Ferie");                 array_push($classes, "cella verde");
-							array_push($sostituzioni, "sostituzioniURP.txt");  array_push($labels, "URP");                    array_push($trailingLabels, "R = Recupero smart working");array_push($classes, "cella arancione");
-							array_push($sostituzioni, "sostituzioniArc.txt");  array_push($labels, "Archivio");               array_push($trailingLabels, "T = Smart working sabato");  array_push($classes, "cella blu");
-							array_push($sostituzioni, "sostituzioniPer.txt");  array_push($labels, "Personale");              array_push($trailingLabels, "A = Assenze a vario titolo");array_push($classes, "");
-							array_push($sostituzioni, "sostituzioniEco.txt");  array_push($labels, "Economato");              array_push($trailingLabels, "");                          array_push($classes, "");
-							array_push($sostituzioni, "sostituzioniPro.txt");  array_push($labels, "Protocollo");             array_push($trailingLabels, "Oggi");                      array_push($classes, "cella-lime-contorno");
+							array_push($sostituzioni, "sostituzioniUR.txt");   array_push($trailingLabels, "SW = Smart Working");        array_push($classes, "");
+							array_push($sostituzioni, "sostituzioniSeg1.txt"); array_push($trailingLabels, "X = Presenza In Ufficio");   array_push($classes, "cella celeste");
+							array_push($sostituzioni, "sostituzioniSeg2.txt"); array_push($trailingLabels, "F = Ferie");                 array_push($classes, "cella verde");
+							array_push($sostituzioni, "sostituzioniURP.txt");  array_push($trailingLabels, "R = Recupero smart working");array_push($classes, "cella arancione");
+							array_push($sostituzioni, "sostituzioniArc.txt");  array_push($trailingLabels, "T = Smart working sabato");  array_push($classes, "cella blu");
+							array_push($sostituzioni, "sostituzioniPer.txt");  array_push($trailingLabels, "A = Assenze a vario titolo");array_push($classes, "");
+							array_push($sostituzioni, "sostituzioniEco.txt");  array_push($trailingLabels, "");                          array_push($classes, "");
+							array_push($sostituzioni, "sostituzioniPro.txt");  array_push($trailingLabels, "Oggi");                      array_push($classes, "cella-lime-contorno");
 							$elemCount = count($labels);
 							
 							for ($idx = 0; $idx < $elemCount; $idx++) {
