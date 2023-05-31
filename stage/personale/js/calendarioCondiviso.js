@@ -548,117 +548,61 @@
 		document.getElementById('footerDiv').style="margin:0";
 	  }
 	  
+	  
+	  function aggiungiBottoneMese(successivo){
+		  const offset = successivo ? 1 : -1;
+		  let newMonth = (month + offset) % 13;
+		  const newYear = newMonth ==  0 ? year + offset: year;
+		  newMonth = newMonth == 0 ? 1 : newMonth;
+		  const monthStr = itMonths[newMonth];
+		  
+		  
+		  const url = "data/"+newYear+"/"+monthStr+".json";
+		  const xhr = new XMLHttpRequest();
+		  
+		  xhr.open('HEAD', url);
+		  xhr.onreadystatechange = function() {
+		    if (xhr.readyState === 4) {
+				if (xhr.status === 200) {
+				  console.log('Creo il bottone con '+newMonth+" "+newYear);
+				  // Crea l'URL con la query string
+				  const currentUrl = window.location.href.split('?')[0]; // removes any current arg
+				  const separator = currentUrl.includes('?') ? '&' : '?';
+				  const newUrl = currentUrl + separator + 'month=' + encodeURIComponent(newMonth) + '&year=' + newYear;
+				  const table = document.getElementById('calendarTable');
+					// Creare una nuova colonna
+				  const newFirstColumn = document.createElement('td');
+				  newFirstColumn.style.height = table.offsetHeight + 'px';
+				  const commonStyle = (successivo ? "border-right: none;" : "border-left: none;") + " border-bottom: none; border-top: none; width:32px; font-weight: bold;";
+				  let idx = 0; let cells = [];
+				  table.querySelectorAll('tr').forEach(function(row) {
+					var newCell = document.createElement('td');
+					successivo ? row.appendChild(newCell) : row.insertBefore(newCell, row.firstChild);
+					newCell.style = commonStyle;
+					cells[idx++] = newCell;
+				  });
+				  
+				  const arrowCell = cells[idx / 2];
+				  arrowCell.innerHTML = successivo ? ">" : "<";
+				  arrowCell.id = (successivo ? "right" : "left") + "Arrow";
+				  arrowCell.style = commonStyle + "cursor: pointer;";
+				  
+				  arrowCell.setAttribute("data-toggle", "tooltip");
+				  arrowCell.setAttribute("data-placement", "top");
+				  arrowCell.setAttribute("title", "Vai a "+monthStr+" "+newYear);
+				   // Reindirizza alla nuova pagina con gli argomenti aggiunti sul click
+				  arrowCell.onclick=function(){window.location.href = newUrl;};
+				}
+		    }
+		  };
+		  
+		  xhr.send();
+	  }
+	  
 	  function aggiungiColonneMesePrecedenteSuccessivo() {
-		  // Ottenere la referenza alla tabella
-			var table = document.getElementById('calendarTable');
-
-			// Creare una nuova colonna all'inizio della tabella
-			var newFirstColumn = document.createElement('td');
-			newFirstColumn.style.height = table.offsetHeight + 'px';
-			var commonStyle = "border-left: none; border-bottom: none; border-top: none; width:32px; font-weight: bold;"
-			let idx = 0; let cells = [];
-			table.querySelectorAll('tr').forEach(function(row) {
-			  var newCell = document.createElement('td');
-			  row.insertBefore(newCell, row.firstChild);
-			  newCell.style = commonStyle;
-			  cells[idx++] = newCell;
-			});
-			
-			let arrowCell = cells[idx / 2];
-			arrowCell.innerHTML = "<";
-			arrowCell.id = "leftArrow";
-			arrowCell.style = commonStyle + "cursor: pointer;";
-			//data-toggle="tooltip" data-placement="top" title="Tooltip on top"
-			arrowCell.setAttribute("data-toggle", "tooltip");
-			arrowCell.setAttribute("data-placement", "top");
-			arrowCell.setAttribute("title", "Vai al mese precedente");
-			
-			arrowCell.onclick = function() {
-			  let newMonth = (month - 1) % 13;
-			  let newYear = newMonth ==  0 ? year - 1: year;
-			  newMonth = newMonth == 0 ? 1 : newMonth;
-			  let monthStr = itMonths[newMonth];
-			  console.log('Richiesta di salto a '+monthStr+" "+newYear);
-			  
-				var url = "data/"+newYear+"/"+monthStr+".json";
-				var xhr = new XMLHttpRequest();
-
-				xhr.open('HEAD', url);
-				xhr.onreadystatechange = function() {
-				  if (xhr.readyState === 4) {
-					if (xhr.status === 200) {
-					  console.log('Ricarico con '+newMonth+" "+newYear);
-					  // Crea l'URL con la query string
-					  var currentUrl = window.location.href.split('?')[0]; // removes any current arg
-					  var separator = currentUrl.includes('?') ? '&' : '?';
-					  var newUrl = currentUrl + separator + 'month=' + encodeURIComponent(newMonth) + '&year=' + newYear;
-
-					   // Reindirizza alla nuova pagina con gli argomenti aggiunti
-					   window.location.href = newUrl;
-					} else {
-						document.getElementById("previousMonthNotFoundModalTitle").innerHTML = "Calendario di "+monthStr+ " " +newYear+ " non trovato.";
-					}
-				  }
-				};
-
-				xhr.send();
-				  
-				};
-			
-			
-			commonStyle = "border-right: none; border-bottom: none; border-top: none; width:32px; font-weight: bold; "
-			idx = 0; cells = [];
-			// Creare una nuova colonna alla fine della tabella
-			var newLastColumn = document.createElement('td');
-			newLastColumn.style.height = table.offsetHeight + 'px';
-			table.querySelectorAll('tr').forEach(function(row) {
-			  var newCell = document.createElement('td');
-			  newCell.style = commonStyle;
-			  row.appendChild(newCell);
-			  cells[idx++] = newCell;
-			});
-			arrowCell = cells[idx / 2];
-			arrowCell.innerHTML = ">";
-			arrowCell.id = "rightArrow";
-			arrowCell.style = commonStyle + "cursor: pointer;";
-			
-			arrowCell.setAttribute("data-toggle", "tooltip");
-			arrowCell.setAttribute("data-placement", "top");
-			arrowCell.setAttribute("title", "Vai al mese successivo");
-			
-			
-			arrowCell.onclick = function() {
-			  let newMonth = (month + 1) % 13;
-			  let newYear = newMonth ==  0 ? year + 1: year;
-			  newMonth = newMonth == 0 ? 1 : newMonth;
-			  let monthStr = itMonths[newMonth];
-			  console.log('Richiesta di salto a '+monthStr+" "+newYear);
-			  
-				var url = "data/"+newYear+"/"+monthStr+".json";
-				var xhr = new XMLHttpRequest();
-
-				xhr.open('HEAD', url);
-				xhr.onreadystatechange = function() {
-				  if (xhr.readyState === 4) {
-					if (xhr.status === 200) {
-					  console.log('Ricarico con '+newMonth+" "+newYear);
-					  // Crea l'URL con la query string
-					  var currentUrl = window.location.href.split('?')[0]; // removes any current arg
-					  var separator = currentUrl.includes('?') ? '&' : '?';
-					  var newUrl = currentUrl + separator + 'month=' + encodeURIComponent(newMonth) + '&year=' + newYear;
-
-					   // Reindirizza alla nuova pagina con gli argomenti aggiunti
-					   window.location.href = newUrl;
-					} else {
-						document.getElementById("previousMonthNotFoundModalTitle").innerHTML = "Calendario di "+monthStr+ " " +newYear+ " non trovato.";
-					}
-				  }
-				};
-
-				xhr.send();
-				  
-				};
-			
+			var successivo = true, precedente = false;
+			aggiungiBottoneMese(precedente);
+			aggiungiBottoneMese(successivo);
 	  }
 	  
 	  function start(){
