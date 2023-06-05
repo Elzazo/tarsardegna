@@ -7,15 +7,9 @@
 			<script lang="javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 			<script>
 			  <?php
-				$defaultDay = date('d');
-				$defaultMonth = date('m');
-				$defaultYear = date('Y');
-				$day = $defaultDay; $month = $defaultMonth; $year = $defaultYear;
-				if (isset($_GET['month'])) {
-					$day = -1;
-					$month = $_GET['month'];
-					$year = $_GET['year'];
-				}
+				$month = isset($_GET['month']) ? $_GET['month'] : date('m');
+				$year = isset($_GET['year']) ? $_GET['year'] : date('Y');
+				$day = isset($_GET['month']) ? ($month == date('m') ? date('d') : -1) : date('d');
 			  ?>
 			  var today = <?php echo $day; ?>;
 			  var month = <?php echo $month; ?>;
