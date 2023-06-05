@@ -3,7 +3,7 @@
 		<p>© 2023 Sviluppato da Aldo Lezza</p>
 	</div>
 	
-	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog">
+	<div class="modal fade" id="saveModal" tabindex="-1" role="dialog">
 	  <div class="modal-dialog" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
@@ -28,6 +28,9 @@
 <script>
 	function setSaveModalBody(newText){
 		document.getElementById("modalBody").innerHTML = newText;
+	}
+	function getSaveModalBody(){
+		return document.getElementById("modalBody").innerHTML;
 	}
 
 </script>

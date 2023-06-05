@@ -308,6 +308,11 @@
 		}
 	  }
 	  
+	  function showHideModal(modalId, show = true) {
+		  var modal = document.getElementById(modalId);
+		  $(modal).modal(show ? 'show' : 'hide');
+	  }
+	  
 	  function salva() {
 		inviaDati();
 	  }
@@ -338,6 +343,12 @@
 					alert.remove();
 				  }, 3000); // Tempo di animazione del fade-out
 				}, 2000); // Durata dell'alert in millisecondi
+				// apre il prompt invio email
+				document.getElementById("afterSaveModalBody").innerHTML=getSaveModalBody();
+				// mostra la finestra modale di salvataggio
+				showHideModal('afterSaveModal');
+
+				
 		  }
 		};
 		var data = "mese=" + encodeURIComponent(itMonths[month]) + "&anno="+encodeURIComponent(year)+"&matrice=" + encodeURIComponent(JSON.stringify(matriceAttuale));
@@ -669,7 +680,7 @@
    }
 	   
 	   
-   function postAjaxCall(url, formData) {
+   function postAjaxCall(url, formData, okCallback = undefined, errorCallback = undefined) {
 		// Creazione della richiesta Ajax
 		var xhr = new XMLHttpRequest();
 		xhr.open("POST", url, true);
@@ -680,9 +691,18 @@
 				var response = xhr.responseText;
 				// Gestisci la risposta dal server
 				console.log(response);
+				if (okCallback !== undefined) {
+					console.log('chiamo la callback ok');
+					okCallback();
+				}
+				
 			} else {
 				// Errore nella richiesta
 				console.log("Errore nella richiesta. Codice status: " + xhr.status);
+				if (errorCallback !== undefined){
+					console.log('chiamo la callback error');
+					errorCallback();
+				}
 			}
 		};
 
@@ -717,7 +737,7 @@
 		  formData.append("distributionListTo", "dipendenti");
 		  formData.append("distributionListCc", "sg");
 		  
-		  postAjaxCall("sendMail.php", formData);
+		  postAjaxCall("sendMail.php", formData, function() { showHideModal('afterSaveModal', false); showHideModal('okSentEmailModal');}, function() { showHideModal('afterSaveModal', false); showHideModal('errorSentEmailModal');});
 		  
 		});	
 	}

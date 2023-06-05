@@ -179,7 +179,7 @@
 								<button style="width:100%" class="btn btn-secondary" onclick="location.reload();">Annulla</button>
 							</td>
 							<td class="senza-bordi" colspan="18">
-								<button style="width:100%" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Salva</button> <!-- onclick="salva()" -->
+								<button style="width:100%" class="btn btn-primary" data-toggle="modal" data-target="#saveModal">Salva</button>
 							</td>
 						</tr>
 						
@@ -187,27 +187,64 @@
 					</tbody>
 				</table>
 			</div>
-		<!--/center-->
-		<!-- Button trigger modal -->
-		<!--button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-		  Launch demo modal
-		</button-->
 
 		<!-- Modal -->
-		<div class="modal fade" id="previousMonthNotFoundModal" tabindex="-1" role="dialog" aria-labelledby="previousMonthNotFoundModalTitle" aria-hidden="true">
+		<div class="modal fade" id="afterSaveModal" tabindex="-1" role="dialog" aria-labelledby="afterSaveModalTitle" aria-hidden="true">
 		  <div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 			  <div class="modal-header">
-				<h5 class="modal-title" id="previousMonthNotFoundModalTitle">Mese non trovato</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<h5 class="modal-title" id="afterSaveModal">Invio e-mail</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="showHideModal('afterSaveModal', false);">
 				  <span aria-hidden="true">&times;</span>
 				</button>
 			  </div>
 			  <div class="modal-body">
-				...
+				<p id="afterSaveModalBody"/>
 			  </div>
 			  <div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+				<button type="button" class="btn btn-primary" onclick="exportTableForEmail();">Invia E-mail</button>
+				<button type="button" class="btn btn-secondary" id="afterSaveCloseModalButton" onclick="showHideModal('afterSaveModal', false);">Chiudi</button>				
+			  </div>
+			</div>
+		  </div>
+		</div>
+		
+		<!-- Modal -->
+		<div class="modal fade" id="okSentEmailModal" tabindex="-1" role="dialog" aria-labelledby="okSentEmailModalTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="okSentEmailModal">Invio e-mail OK</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="showHideModal('okSentEmailModal', false);">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			  <div class="modal-body">
+				<p id="okSentEmailModalBody">E-mail inviata con successo!</p>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" id="okSentEmailCloseModalButton" onclick="showHideModal('okSentEmailModal', false);">Chiudi</button>				
+			  </div>
+			</div>
+		  </div>
+		</div>
+		
+		
+		<!-- Modal -->
+		<div class="modal fade" id="errorSentEmailModal" tabindex="-1" role="dialog" aria-labelledby="errorSentEmailModalTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="errorSentEmailModal">Errore e-mail</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="showHideModal('errorSentEmailModal', false);">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			  <div class="modal-body">
+				<p id="errorSentEmailModalBody">E-mail non inviata, errore interno.</p>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" id="errorSentEmailCloseModalButton" onclick="showHideModal('errorSentEmailModal', false);">Chiudi</button>				
 			  </div>
 			</div>
 		  </div>
