@@ -536,7 +536,7 @@
 	  }
 	  
 	  function setTitle() {
-		document.getElementById('titleId').innerHTML = "&nbsp; &nbsp;Calendario Condiviso"; 
+		document.getElementById('titleId').innerHTML = "&nbsp; &nbsp;Calendario Condiviso - "+itMonths[month]+" "+year; 
 	  }
 	  
 	  function setMonthInterval() {
