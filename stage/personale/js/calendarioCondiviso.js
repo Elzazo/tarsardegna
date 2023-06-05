@@ -499,51 +499,38 @@
 		  }
 	  }
 	  
-	  function rimuoviColonnaOggiGrassetto(table) {
-		  
-		// si salta la prima colonna e quindi il numero del giorno è l'indice corretto  
-		var colIndex = today;
-		console.log("rimuoviColonnaOggiGrassetto() Today:"+today);
-		// Seleziona la tabella
-		var size = 1;
-		var color = "black";
-		// Itera su tutte le righe della tabella, a partire dalla seconda riga
-		for (var i = 1; i < (table.rows.length - 1); i++) { //l'ultima riga contiene i bottoni
-
+	  function setUnsetColumnBorderBold(table, bold = true) {
+		  if (today == -1) {
+			return; 
+		}
+		// si salta la prima colonna e quindi il numero del giorno è l'indice corretto
+		// se va saltata la riga della colonna che contiene la freccia a sinistra aggiungiamo 1
+		var colIndex =  document.getElementById('leftArrow') === null ? today : today + 1;
+		console.log("setUnsetColumnBorderBold(table, bold) tableId: "+table.id+", bold: "+bold+", Today:"+today);
+		var size = bold ? 5 : 1;
+		var color = bold ? "lime" : "black";
+		// Itera su tutte le righe della tabella, a partire dalla seconda riga (prima header)
+		let len = table.rows.length - 2;
+		console.log("setUnsetColumnBorderBold numero delle celle da impostare per bold:"+len);
+		var innerStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+";";
+		for (var i = 1; i < len; i++) { //l'ultima riga contiene i bottoni
 		  // Seleziona la cella corrispondente alla colonna desiderata
 		  var cell = table.rows[i].cells[colIndex];
-
+		  console.log("Applico lo stile "+innerStyle+" alla cella "+cell.id);
 		  // Applica lo stile
-		  cell.style = "border-left: "+size+"px  "+color+"; border-right: "+size+"px  "+color+"; ";
+		  cell.style = innerStyle;
 		}
-		document.getElementById("th-"+today).style = "border: "+size+"px solid black;"
-		table.rows[table.rows.length - 2].cells[colIndex].style = "border: "+size+"px solid black;"
 		
+		document.getElementById("th-"+today).style = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-top: "+size+"px solid "+color+";"
+		table.rows[len].cells[colIndex].style = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-bottom: "+size+"px solid "+color+";";
+	  }
+	  
+	  function rimuoviColonnaOggiGrassetto() {
+		setUnsetColumnBorderBold(document.getElementById("calendarTable"), false);
 	  }
 	  
 	  function mettiColonnaOggiInGrassetto() {
-		if (today == -1) {
-			return; 
-		}
-		// si salta la prima colonna e quindi il numero del giorno è l'indice corretto  
-		var colIndex = today;
-		console.log("mettiColonnaOggiInGrassetto() Today:"+today);
-		// Seleziona la tabella
-		var table = document.getElementById("calendarTable");
-		var size = 5;
-		var color = "lime";
-		// Itera su tutte le righe della tabella, a partire dalla seconda riga
-		for (var i = 1; i < (table.rows.length - 1); i++) { //l'ultima riga contiene i bottoni
-
-		  // Seleziona la cella corrispondente alla colonna desiderata
-		  var cell = table.rows[i].cells[colIndex];
-
-		  // Applica lo stile
-		  cell.style = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; ";
-		}
-		document.getElementById("th-"+today).style = "border-top: "+size+"px solid "+color+"; border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; "
-		table.rows[table.rows.length - 2].cells[colIndex].style = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-bottom: "+size+"px solid "+color+";"
-		
+		setUnsetColumnBorderBold(document.getElementById("calendarTable"), true);
 	  }
 	  
 	  function setTitle() {
@@ -618,9 +605,9 @@
 	  
 	  function start(){
 		  caricaNumeroGiorniLavorativi();
+		  mettiColonnaOggiInGrassetto();
 		  setMonthInterval();
 		  processaMatrice();
-		  mettiColonnaOggiInGrassetto();
 		  aggiungiColonneMesePrecedenteSuccessivo();
 		  setActiveNavBarLink('aree');
 		  setShorterFooter();
@@ -714,13 +701,11 @@
 			
 			
 	function exportTableForEmail() {
-		// Ottenere il riferimento all'elemento tabella
-		var table = document.getElementById('calendarTable')
-		rimuoviColonnaOggiGrassetto(table);
+		rimuoviColonnaOggiGrassetto();
 		
 
 		// Utilizzare html2canvas per catturare l'immagine del contenuto con gli stili applicati
-		html2canvas(table).then(function (canvas) {
+		html2canvas(document.getElementById('calendarTable')).then(function (canvas) {
 		  mettiColonnaOggiInGrassetto();
 		  // Convertire il canvas in un'immagine
 		  var imgData = canvas.toDataURL();
@@ -737,7 +722,11 @@
 		  formData.append("distributionListTo", "dipendenti");
 		  formData.append("distributionListCc", "sg");
 		  
-		  postAjaxCall("sendMail.php", formData, function() { showHideModal('afterSaveModal', false); showHideModal('okSentEmailModal');}, function() { showHideModal('afterSaveModal', false); showHideModal('errorSentEmailModal');});
+		  postAjaxCall("sendMail.php", 
+					    formData, 
+						function() { showHideModal('afterSaveModal', false); showHideModal('okSentEmailModal');}, 
+						function() { showHideModal('afterSaveModal', false); showHideModal('errorSentEmailModal');}
+						);
 		  
 		});	
 	}
