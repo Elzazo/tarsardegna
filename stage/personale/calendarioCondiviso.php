@@ -65,7 +65,6 @@
 	<body onload="start();" style="display: block;position: static;overflow: visible;">
 	<?php echo file_get_contents(__DIR__ . '\..\..\www\navbar.html'); ?>
 	<main class="page landing-page">
-		<!--center-->
 			<div style="margin-top: 10px">
 				<table id="calendarTable" style="margin: 0 auto;">
 					  <thead>
@@ -169,10 +168,10 @@
 							<!--td class="senza-bordi" colspan="12">
 								<button style="width:100%" onclick="esportaExcel()">Esporta in Excel</button>
 							</td-->
-							<td class="senza-bordi" colspan="18">
+							<td class="senza-bordi" id="cancelButton" colspan="18">
 								<button style="width:100%" class="btn btn-secondary" onclick="location.reload();">Annulla</button>
 							</td>
-							<td class="senza-bordi" colspan="18">
+							<td class="senza-bordi" id="saveButton" colspan="18">
 								<button style="width:100%" class="btn btn-primary" data-toggle="modal" data-target="#saveModal">Salva</button>
 							</td>
 						</tr>

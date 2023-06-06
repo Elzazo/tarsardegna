@@ -3,25 +3,27 @@
 <title>Home - T.A.R. Sardegna</title>
 <meta name="description" content="Applicazioni ad uso interno del T.A.R. Sardegna">
 <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
+<link rel="stylesheet" href="assets/css/Montserrat.css">
 <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css">
+<link rel="stylesheet" href="assets/css/baguetteBox.min.css">
 <link rel="stylesheet" href="assets/css/Login-Form-Basic-icons.css">
 <link rel="stylesheet" href="assets/css/vanilla-zoom.min.css">
   
-  <!-- Script JavaScript di jQuery (richiesto per Bootstrap) -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<!-- Script JavaScript di jQuery (richiesto per Bootstrap) -->
+<script src="assets/js/jquery-3.7.0.min.js"></script>
+ 
+<!-- Script JavaScript di Popper.js (richiesto per Bootstrap) -->
+<script src="assets/js/popper.min.js"></script>
   
-  <!-- Script JavaScript di Popper.js (richiesto per Bootstrap) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script> 
-  
-  <!-- Script JavaScript di Bootstrap -->
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="assets/js/bs-init.js"></script>
+<script src="assets/js/theme.js"></script>
 
 
 
 <script type="text/javascript">
 var linkNames = ["home", "aree",  "contatti"]; //"login",
+
+const AFTER_LOAD_EVENT_NAME = "endOfRender";
 
 function setActiveNavBarLink(link){
 	for (var i = 0; i < linkNames.length; i++) {
@@ -34,6 +36,28 @@ function setActiveNavBarLink(link){
 	
 
 }
+
+
+function fireCustomEvent(customEventName) {
+	// Crea un nuovo evento personalizzato customEventName
+	const customEvent = new CustomEvent(customEventName);
+
+	// Emetti l'evento
+	window.dispatchEvent(customEvent);
+}
+
+// Aggiungi un listener per l'evento AFTER_LOAD_EVENT_NAME
+window.addEventListener(AFTER_LOAD_EVENT_NAME, function() {
+										  console.log('Rendering completato');
+										  if (typeof afterLoad === 'function') {
+										  // La funzione esiste, puoi eseguire il codice qui
+										  console.log("eventListener(endOfRender): Eseguo afterLoad()");
+										  afterLoad();
+										} else {
+										  // La funzione non esiste
+										  console.log("eventListener(endOfRender): Nessuna afterLoad definita.");
+										}
+});
 
 </script>
 

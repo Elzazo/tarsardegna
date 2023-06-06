@@ -547,6 +547,8 @@
 	  }
 	  
 	  
+	  var leftComplete = false, rightComplete = false;
+	  
 	  function aggiungiBottoneMese(successivo){
 		  const offset = successivo ? 1 : -1;
 		  let newMonth = (month + offset) % 13;
@@ -590,7 +592,18 @@
 				  arrowCell.setAttribute("title", "Vai a "+monthStr+" "+newYear);
 				   // Reindirizza alla nuova pagina con gli argomenti aggiunti sul click
 				  arrowCell.onclick=function(){window.location.href = newUrl;};
+				} else {
+					console.log("aggiungiBottoneMese("+offset == 1 +") File non trovato, freccia non aggiunta.");
 				}
+				
+				if (successivo) {
+					console.log("aggiungiBottoneMese(successivo): AJAX Complete");
+					rightComplete = true;
+				}else {
+					console.log("aggiungiBottoneMese(precedente): AJAX Complete");
+					leftComplete = true;
+				}
+				
 		    }
 		  };
 		  
@@ -601,6 +614,20 @@
 			var successivo = true, precedente = false;
 			aggiungiBottoneMese(precedente);
 			aggiungiBottoneMese(successivo);
+			// Esegui una funzione ogni 1 secondo
+			/*const interval = setInterval(function() {
+				if (leftComplete && rightComplete) {
+					clearInterval(interval);
+					fireCustomEvent(AFTER_LOAD_EVENT_NAME);
+				}
+			}, 50);*/
+	  }
+	  
+	  function setProperSaveButtonColspan(){
+		  var cancelButton = document.getElementById("cancelButton");
+		  var colSpans = (days + 4) / 2; 
+		  document.getElementById("cancelButton").setAttribute("colspan", colSpans);
+		  document.getElementById("saveButton").setAttribute("colspan", days % 2 == 1 ? colSpans + 1 : colSpans);
 	  }
 	  
 	  function start(){
@@ -608,10 +635,12 @@
 		  mettiColonnaOggiInGrassetto();
 		  setMonthInterval();
 		  processaMatrice();
+		  fireCustomEvent(AFTER_LOAD_EVENT_NAME);
 		  aggiungiColonneMesePrecedenteSuccessivo();
 		  setActiveNavBarLink('aree');
 		  setShorterFooter();
 		  setTitle();
+		  setProperSaveButtonColspan();
 	  }
 	  
 	  function esportaExcel() {
@@ -729,5 +758,17 @@
 						);
 		  
 		});	
+	}
+	
+	function afterLoad() {
+		// cose da fare una volta che il load è completato, chiamata da header
+		/*console.log("calendarioCondiviso.js afterLoad()");
+		var computedStyle = window.getComputedStyle(document.getElementById("calendarTable"));
+		var width = computedStyle.width;
+		console.log("afterLoad calendarTable has size:"+width);
+		var div = document.getElementById("commandsDiv");
+		var newStyle = div.getAttribute("style") + " " + "width:"+width;
+		console.log("afterLoad new div style:"+newStyle);
+		div.setAttribute("style", newStyle);*/
 	}
 			  
