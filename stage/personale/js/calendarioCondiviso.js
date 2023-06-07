@@ -768,14 +768,20 @@
 		img.src = imgData;
 		return img;
 	}
+	
+	function resetSendEmailButtonLogic() {
+		document.getElementById("afterSaveSaveModalButton").style="display:initial";
+		document.getElementById("afterSaveSpinner").style="display:none";
+	}
+	
 			
 	function sendEmailButtonLogic() {
 		document.getElementById("afterSaveSaveModalButton").style="display:none";
 		document.getElementById("afterSaveSpinner").style="display:initial";
-		sendEmail();
+		sendEmail(resetSendEmailButtonLogic);
 	}
 			
-	function sendEmail() {
+	function sendEmail(callback = undefined) {
 		let img = getCalendarTableAsImageTag();
 		let formData = new FormData();
 		formData.append("oggetto", "Programmazione presenze ufficio");
@@ -785,9 +791,10 @@
 		formData.append("distributionListCc", "sg");
 		postAjaxCall("sendMail.php", 
 					    formData, 
-						function() { showHideModal('afterSaveModal', false); showHideModal('okSentEmailModal');}, 
-						function() { showHideModal('afterSaveModal', false); showHideModal('errorSentEmailModal');}
+						function() { showHideModal('afterSaveModal', false); showHideModal('okSentEmailModal'); if (callback !== undefined) {callback();} }, 
+						function() { showHideModal('afterSaveModal', false); showHideModal('errorSentEmailModal');  if (callback !== undefined) {callback();}}
 						);
+		
 	}
 	
 	function toTokenizedString(stringToConvert, splitToken = " ", mergeToken = " ") {
