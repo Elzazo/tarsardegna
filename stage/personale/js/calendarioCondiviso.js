@@ -187,7 +187,7 @@
 	  
 	  function cambiaValoreIndietro(cella) {
 			var valoreAttuale = cella.getAttribute("valore");
-			var nuoviValori = ["R", "X","F", "SW", "A"];
+			var nuoviValori = ["F", "R","A", "SW", "X"];
 			var nuovoValore = nuoviValori[(nuoviValori.indexOf(valoreAttuale) + 1) % nuoviValori.length];
 			cella.setAttribute("valore", nuovoValore);
 			cella.innerHTML = nuovoValore;
@@ -214,7 +214,7 @@
 	
 	  function cambiaValore(cella) {
 			var valoreAttuale = cella.getAttribute("valore");
-			var nuoviValori = ["A", "SW", "F", "X", "R"];
+			var nuoviValori = ["X", "SW", "A", "R", "F"];
 			var nuovoValore = nuoviValori[(nuoviValori.indexOf(valoreAttuale) + 1) % nuoviValori.length];
 			cella.setAttribute("valore", nuovoValore);
 			cella.innerHTML = nuovoValore;
