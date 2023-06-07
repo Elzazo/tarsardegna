@@ -52,6 +52,15 @@
 				
 				
 				?>
+				
+				// impedisce di chiudere la pagina se ci sono dati non salvati
+				window.addEventListener('beforeunload', function (e) {
+					console.log("beforeunload esecuzione");
+					if (isDirty()){
+						console.log("beforeunload ci sono dati non salvati, mostriamo l'avviso");
+						e.returnValue ="Uscire senza salvare?";
+					}
+				});
 			</script>
 
 

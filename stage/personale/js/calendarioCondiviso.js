@@ -97,6 +97,7 @@
 		}
 		var comparisonResult = confrontaMatrici(matrice, matriceAttuale);
 		var diff = comparisonResult.length;
+		setDirty(diff > 0);
 		var newText = "Rilevat"+ (diff == 1 ? "a": "e") + " <strong>" +diff+ "</strong> variazion"+ (diff == 1 ? "e": "i") +"<br><br>"; 
 		console.log(comparisonResult);
 		for (var i=0; i < diff; i++){
@@ -324,6 +325,7 @@
 		xhr.onreadystatechange = function() {
 		  if (xhr.readyState === 4 && xhr.status === 200) {
 				copiaMatrice(matriceAttuale, matrice);
+				setDirty(false);
 				document.getElementById("comandi").style.display = "none";
 				// Mostra l'alert di successo
 				// Creazione del div alert
@@ -346,9 +348,7 @@
 				// apre il prompt invio email
 				document.getElementById("afterSaveModalBody").innerHTML=getSaveModalBody();
 				// mostra la finestra modale di salvataggio
-				showHideModal('afterSaveModal');
-
-				
+				showHideModal('afterSaveModal');				
 		  }
 		};
 		var data = "mese=" + encodeURIComponent(itMonths[month]) + "&anno="+encodeURIComponent(year)+"&matrice=" + encodeURIComponent(JSON.stringify(matriceAttuale));

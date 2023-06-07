@@ -56,6 +56,12 @@ window.addEventListener(AFTER_LOAD_EVENT_NAME, function() {
 										}
 });
 
+var dirty = false;
+
+function setDirty(trueForDirty) { dirty = trueForDirty; }
+function isDirty() { return dirty; }
+
+
 </script>
 
 
