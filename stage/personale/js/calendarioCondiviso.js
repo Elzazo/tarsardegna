@@ -322,41 +322,42 @@
 	  function inviaDati() {
 		let xhr = new XMLHttpRequest();
 		let url = "salvaMatrice.php"; // L'URL della pagina PHP che elabora la richiesta
-		xhr.onreadystatechange = function() {
-		  if (xhr.readyState === 4 && xhr.status === 200) {
-				copiaMatrice(matriceAttuale, matrice);
-				setDirty(false);
-				computeCalendarAsImage();
-				document.getElementById("comandi").style.display = "none";
-				// Mostra l'alert di successo
-				// Creazione del div alert
-				var alert = document.createElement('div');
-				alert.id = 'myAlert';
-				alert.classList.add('alert', 'alert-success', 'fade', 'fixed-bottom');
-				alert.textContent = '-';
-
-				// Aggiunta del div alert al documento
-				document.body.appendChild(alert);
-				console.log(alert);	
-				alert.innerHTML = xhr.responseText;
-				alert.classList.add('show');
-				setTimeout(function() {
-				  alert.classList.remove('show');
-				  setTimeout(function() {
-					alert.remove();
-				  }, 3000); // Tempo di animazione del fade-out
-				}, 2000); // Durata dell'alert in millisecondi
-				// apre il prompt invio email
-				document.getElementById("afterSaveModalBody").innerHTML=getSaveModalBody();
-				// mostra la finestra modale di salvataggio
-				showHideModal('afterSaveModal');				
-		  }
-		};
 		var data = "mese=" + encodeURIComponent(itMonths[month]) + "&anno="+encodeURIComponent(year)+"&matrice=" + encodeURIComponent(JSON.stringify(matriceAttuale));
 		console.log("Invio: "+data);
-		xhr.open("GET", "salvaMatrice.php?" + data, true);
+		xhr.open("GET", "salvaMatrice.php?" + data, false);
 		xhr.setRequestHeader("Content-type", "application/json");
 		xhr.send(data); // Invia la richiesta con i dati della matrice
+		
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			copiaMatrice(matriceAttuale, matrice);
+			setDirty(false);
+			computeCalendarAsImage();
+			document.getElementById("comandi").style.display = "none";
+			// Mostra l'alert di successo
+			// Creazione del div alert
+			var alert = document.createElement('div');
+			alert.id = 'myAlert';
+			alert.classList.add('alert', 'alert-success', 'fade', 'fixed-bottom');
+			alert.textContent = '-';
+		
+			// Aggiunta del div alert al documento
+			document.body.appendChild(alert);
+			console.log(alert);	
+			alert.innerHTML = xhr.responseText;
+			alert.classList.add('show');
+			setTimeout(function() {
+			  alert.classList.remove('show');
+			  setTimeout(function() {
+				alert.remove();
+			  }, 3000); // Tempo di animazione del fade-out
+			}, 2000); // Durata dell'alert in millisecondi
+			// apre il prompt invio email
+			document.getElementById("afterSaveModalBody").innerHTML=getSaveModalBody();
+			// mostra la finestra modale di salvataggio
+			showHideModal('afterSaveModal');				
+		}
+		
+		
 
 	  }
 	  
