@@ -331,15 +331,15 @@
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			copiaMatrice(matriceAttuale, matrice);
 			setDirty(false);
-			computeCalendarAsImage();
 			document.getElementById("comandi").style.display = "none";
+			computeCalendarAsImage();
 			// Mostra l'alert di successo
 			// Creazione del div alert
 			var alert = document.createElement('div');
 			alert.id = 'myAlert';
 			alert.classList.add('alert', 'alert-success', 'fade', 'fixed-bottom');
 			alert.textContent = '-';
-		
+			
 			// Aggiunta del div alert al documento
 			document.body.appendChild(alert);
 			console.log(alert);	
@@ -745,7 +745,6 @@
 		row.deleteCell(row.cells.length - 1);
 	  }
 	}
-
 	
 	var imgData;
 	
@@ -760,6 +759,7 @@
 			// Convertire il canvas in un'immagine
 		   console.log("getCalendarTableAsImageTag() Conversione completata");
 		   imgData = canvas.toDataURL();
+		   mettiColonnaOggiInGrassetto(clonedCalendarTable);
 		   document.body.removeChild(clonedTable);
 		});	
 	}
