@@ -65,8 +65,10 @@
 	<body onload="start();" style="display: block;position: static;overflow: visible;">
 	<?php echo file_get_contents(__DIR__ . '\..\..\www\navbar.html'); ?>
 	<main class="page landing-page">
-			<div style="margin-top: 10px">
-				<table id="calendarTable" style="margin: 0 auto;">
+		<div style="margin-top: 10px; display: flex; justify-content: space-between;">
+				<div style="flex: 1"></div>
+				<div id="calendarTableDiv" style="flex: 0 0 auto; display: flex; justify-content: center; position: relative">
+					<table id="calendarTable"> <!-- margin: 0 auto; -->
 					  <thead>
 						<tr>
 						  <th id="monthThId"/>
@@ -179,6 +181,8 @@
 						
 					</tbody>
 				</table>
+				</div>
+				<div style="flex: 1"></div>
 			</div>
 
 		<!-- Modal -->
