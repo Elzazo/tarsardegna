@@ -208,7 +208,10 @@
 				<p id="afterSaveModalBody"/>
 			  </div>
 			  <div class="modal-footer">
-				<button type="button" class="btn btn-primary" onclick="exportTableForEmail();">Invia E-mail</button>
+			    <div class="spinner-border text-primary" role="status" id="afterSaveSpinner" style="display:none">
+				  <span class="visually-hidden">Loading...</span>
+				</div>
+				<button type="button" class="btn btn-primary" id="afterSaveSaveModalButton" onclick="sendEmailButtonLogic();">Invia E-mail</button>
 				<button type="button" class="btn btn-secondary" id="afterSaveCloseModalButton" onclick="showHideModal('afterSaveModal', false);">Chiudi</button>				
 			  </div>
 			</div>

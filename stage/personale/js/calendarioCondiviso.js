@@ -326,6 +326,7 @@
 		  if (xhr.readyState === 4 && xhr.status === 200) {
 				copiaMatrice(matriceAttuale, matrice);
 				setDirty(false);
+				computeCalendarAsImage();
 				document.getElementById("comandi").style.display = "none";
 				// Mostra l'alert di successo
 				// Creazione del div alert
@@ -525,12 +526,12 @@
 		table.rows[len].cells[colIndex].style = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-bottom: "+size+"px solid "+color+";";
 	  }
 	  
-	  function rimuoviColonnaOggiGrassetto() {
-		setUnsetColumnBorderBold(document.getElementById("calendarTable"), false);
+	  function rimuoviColonnaOggiGrassetto(table = document.getElementById("calendarTable")) {
+		setUnsetColumnBorderBold(table, false);
 	  }
 	  
-	  function mettiColonnaOggiInGrassetto() {
-		setUnsetColumnBorderBold(document.getElementById("calendarTable"), true);
+	  function mettiColonnaOggiInGrassetto(table = document.getElementById("calendarTable")) {
+		setUnsetColumnBorderBold(table, true);
 	  }
 	  
 	  function setTitle() {
@@ -641,6 +642,7 @@
 		  setShorterFooter();
 		  setTitle();
 		  setProperSaveButtonColspan();
+		  computeCalendarAsImage();
 	  }
 	  
 	  function esportaExcel() {
@@ -726,39 +728,117 @@
 		xhr.send(formData);
 		
 	}
-			
-			
-			
-	function exportTableForEmail() {
-		rimuoviColonnaOggiGrassetto();
+	
+	function rimuoviPrimaEdUltimaColonna(table) {
+	  // Ottieni tutte le righe della tabella
+	  let rows = table.rows;
+
+	  // Itera su tutte le righe della tabella
+	  for (let i = 0; i < rows.length; i++) {
+		let row = rows[i];
+
+		// Rimuovi la prima colonna (indice 0)
+		row.deleteCell(0);
+
+		// Rimuovi l'ultima colonna (indice lunghezza riga - 1)
+		row.deleteCell(row.cells.length - 1);
+	  }
+	}
+
+	
+	var imgData;
+	
+	function computeCalendarAsImage() {
+		let clonedTable = document.getElementById('calendarTable').cloneNode(true);
+		clonedTable.id="clonedCalendarTable";
+        document.body.appendChild(clonedTable);
+		rimuoviColonnaOggiGrassetto(clonedTable);
+		rimuoviPrimaEdUltimaColonna(clonedTable);
 		
-
-		// Utilizzare html2canvas per catturare l'immagine del contenuto con gli stili applicati
-		html2canvas(document.getElementById('calendarTable')).then(function (canvas) {
-		  mettiColonnaOggiInGrassetto();
-		  // Convertire il canvas in un'immagine
-		  var imgData = canvas.toDataURL();
-
-		  // Creare un elemento immagine
-		  var img = document.createElement('img');
-		  img.src = imgData;
-		  
-		  
-		  var formData = new FormData();
-		  formData.append("oggetto", "Programmazione presenze ufficio");
-		  formData.append("corpo", "<html><head/><body>"+img.outerHTML+"</body></html>");
-		  formData.append("mittente", "a.lezza@giustizia-amministrativa.it");
-		  formData.append("distributionListTo", "dipendenti");
-		  formData.append("distributionListCc", "sg");
-		  
-		  postAjaxCall("sendMail.php", 
+		html2canvas(clonedTable).then(function (canvas) {
+			// Convertire il canvas in un'immagine
+		   console.log("getCalendarTableAsImageTag() Conversione completata");
+		   imgData = canvas.toDataURL();
+		   document.body.removeChild(clonedTable);
+		});	
+	}
+		
+	function getCalendarTableAsImageTag(){
+		let img = document.createElement('img');
+		img.src = imgData;
+		return img;
+	}
+			
+	function sendEmailButtonLogic() {
+		document.getElementById("afterSaveSaveModalButton").style="display:none";
+		document.getElementById("afterSaveSpinner").style="display:initial";
+		sendEmail();
+	}
+			
+	function sendEmail() {
+		let img = getCalendarTableAsImageTag();
+		let formData = new FormData();
+		formData.append("oggetto", "Programmazione presenze ufficio");
+		formData.append("corpo", "<html><head/><body>"+img.outerHTML+"</body></html>");
+		formData.append("mittente", "a.lezza@giustizia-amministrativa.it");
+		formData.append("distributionListTo", "dipendenti");
+		formData.append("distributionListCc", "sg");
+		postAjaxCall("sendMail.php", 
 					    formData, 
 						function() { showHideModal('afterSaveModal', false); showHideModal('okSentEmailModal');}, 
 						function() { showHideModal('afterSaveModal', false); showHideModal('errorSentEmailModal');}
 						);
-		  
-		});	
 	}
+	
+	function toTokenizedString(stringToConvert, splitToken = " ", mergeToken = " ") {
+		let lines = stringToConvert.split(splitToken); // Divide il testo a seconda dello splitToken
+		console.log(lines);
+		let combinedString = lines.join(mergeToken); // Unisce le righe utilizzando il mergeToken
+		console.log(combinedString);
+		return combinedString;
+	}
+
+
+	function doAjaxSyncCall(file) {
+		let xhr = new XMLHttpRequest();
+		console.log("doAjaxSyncCall("+file+") Eseguo chiamata AJAX sincrona");
+		xhr.open('GET', file, false); // Imposta l'attributo async su false
+		xhr.send();
+		return xhr.status === 200 ? xhr.responseText : undefined;
+	}
+
+	// non funziona a causa del body troppo grande
+	function composeMail() {
+	  let recipients = toTokenizedString(doAjaxSyncCall("consts/address/email/dipendenti.txt"), "\r\n", ";");
+	  let cc =  toTokenizedString(doAjaxSyncCall("consts/address/email/cc.txt"), "\r", ";");
+	  let subject = 'Programmazione presenze ufficio mese di '+itMonths[month];
+	  let content = "<html><head/><body>"+getCalendarTableAsImageTag().outerHTML+"</body></html>";
+	  
+	  let encodedRecipients = encodeURIComponent(recipients);
+	  let encodedCC = encodeURIComponent(cc);
+	  let encodedSubject = encodeURIComponent(subject);
+	  let encodedContent = encodeURIComponent(content);
+	  
+	  let mailtoLink = 'mailto:' + encodedRecipients + '?cc=' + encodedCC + '&subject=' + encodedSubject ;//+ '&body=' + encodedContent;
+	  console.log(mailtoLink);
+	  window.location.href = mailtoLink;
+	/*
+	  // Crea il pulsante al volo
+	  let button = document.createElement('button');
+	  button.innerText = 'Apri Mail';
+
+	  // Imposta il CSS per rendere il pulsante invisibile
+	  button.style.display = 'none'; // o button.style.visibility = 'hidden';
+
+	  // Aggiungi il gestore di eventi onclick al pulsante
+	  button.onclick = function() {
+		
+	  };
+
+	  // Aggiungi il pulsante al documento
+	  document.body.appendChild(button); */
+	}
+
 	
 	function afterLoad() {
 		// cose da fare una volta che il load è completato, chiamata da header
@@ -770,5 +850,4 @@
 		var newStyle = div.getAttribute("style") + " " + "width:"+width;
 		console.log("afterLoad new div style:"+newStyle);
 		div.setAttribute("style", newStyle);*/
-	}
-			  
+	}		  
