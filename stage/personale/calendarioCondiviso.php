@@ -190,6 +190,7 @@
 							</td>
 						</tr>
 						
+						<div id="converterDiv"/>
 						
 					</tbody>
 				</table>

@@ -94,6 +94,16 @@ function removeTrailingColumnsFromTable(table) {
 	  }
 }
 
+function rimpiazzaAccentate(str) {
+	str = str.replaceAll("à", "&agrave;");
+	str = str.replaceAll("è", "&egrave;");
+	str = str.replaceAll("é", "&eacute;");
+	str = str.replaceAll("ì", "&iacute;");
+	str = str.replaceAll("ò", "&oacute;");
+	str = str.replaceAll("ù", "&uacute;");
+	return str;
+}
+
 </script>
 
 

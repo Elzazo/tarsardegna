@@ -68,6 +68,8 @@
 		return day;
 	}
 	
+	// mantiene il testo della mail
+	var comparisonContent = "";
 	
 	function aggiornaMatriceAttuale(id) {
 		const actualFn = "aggiornaMatriceAttuale("+id+") ";
@@ -85,13 +87,15 @@
 			matriceAttuale[idx][day]=document.getElementById(id).getAttribute("valore");
 		}
 		const comparisonResult = confrontaMatrici(matrice, matriceAttuale);
+		comparisonContent = "";
 		const diff = comparisonResult.length;
 		setDirty(diff > 0);
 		let newText = "Rilevat"+ (diff == 1 ? "a": "e") + " <strong>" +diff+ "</strong> variazion"+ (diff == 1 ? "e": "i") +"<br><br>"; 
 		console.log(comparisonResult);
 		for (let i=0; i < diff; i++){
-			newText = newText + comparisonResult[i].log + "<br>" ;
+			comparisonContent = comparisonContent + comparisonResult[i].log + "<br>";
 		}
+		newText = newText + comparisonContent;
 		setSaveModalBody(newText);
 		//console.log("Differenze rilevate:" + diff);
 		document.getElementById("comandi").style.display = (diff > 0)  ?  "table-row" : "none";
@@ -206,6 +210,20 @@
 		aggiornaMatriceAttuale(cella.getAttribute("id"));
 	  }
 	  
+	  function getLog(indiceMatrice, nuovoValore, giorno) {
+		  let log = "";
+		  if (indiceMatrice == 0) {
+			log = (nuovoValore == "" ? "Rimossa scadenza da": "Nuova scadenza: '"+ nuovoValore+"'") + giorno + ".";
+		  } else if (indiceMatrice == 1){
+			log = "Il Presidente "+ (nuovoValore === undefined || nuovoValore === 'A' ? "non": "") +" sarà presente" + giorno + ".";
+		  } else if (indiceMatrice == 2){
+			log = (nuovoValore === undefined || nuovoValore === '' ? "Rimosso appunto SG per": "Nuovo appunto per SG: '"+nuovoValore+"'") + giorno + ".";
+		  }else {
+		  	log = (nomiRighe[indiceMatrice] + " " + ((frasi[nuovoValore] === undefined) ?   "sarà eseguito da " + nuovoValore : frasi[nuovoValore]) + giorno +".");
+		  }
+		  return log;
+	  }
+	  
 	  function confrontaMatrici(matrice1, matrice2) {
 		  var differenze = [];
 		  let nr = matrice1.length; // numero di righe
@@ -217,12 +235,7 @@
 				var valore1 = matrice1[i][j];
 				var valore2 = matrice2[i][j];
 				console.log("confrontaMatrici ["+i+"]["+j+"] vecchio valore:"+matrice1[i][j]+", nuovo valore:"+matrice2[i][j]);
-				var log; 
-				if (i == 2){
-					log = ("Nuovo appunto per SG: "+valore2+" giorno " + (j+1) + " "+itMonths[month]+".");
-				}else {
-					log = (nomiRighe[i] + " " + ((frasi[valore2] === undefined) ?   "sarà eseguito da " + valore2 : frasi[valore2]) + " giorno " + (j+1) + " "+itMonths[month]+".");
-				}
+				var log = getLog(i, valore2, " giorno " + (j+1) + " "+itMonths[month])
 				console.log(log);
 				differenze.push({riga: i+1, colonna: j+1, valore1: matrice1[i][j], valore2: matrice2[i][j], log: log});
 			  }
@@ -673,6 +686,7 @@
 		
 	}
 	
+	// mantiene la versione immagine della tabella attualmente salvata
 	var imgData;
 	
 	function cloneTable(sourceTable, idPrefix = clonedPrefix){
@@ -696,7 +710,8 @@
 	
 	function computeCalendarAsImage() {
 		const clonedTable = cloneCalendarTable();
-		const par = document.getElementById("calendarTableDiv");
+		//const par = document.getElementById("calendarTableDiv");
+		const par = document.getElementById("converterDiv");
 		par.appendChild(clonedTable);
 		rimuoviColonnaOggiGrassetto(clonedTable, clonedPrefix);
 		removeTrailingColumnsFromTable(clonedTable);
@@ -734,7 +749,7 @@
 		let img = getCalendarTableAsImageTag();
 		let formData = new FormData();
 		formData.append("oggetto", "Programmazione presenze ufficio");
-		formData.append("corpo", "<html><head/><body>"+img.outerHTML+"</body></html>");
+		formData.append("corpo", "<html><head/><body>"+rimpiazzaAccentate(comparisonContent)+"<br/>"+img.outerHTML+"</body></html>");
 		formData.append("mittente", "a.lezza@giustizia-amministrativa.it");
 		formData.append("distributionListTo", "dipendenti");
 		formData.append("distributionListCc", "sg");
