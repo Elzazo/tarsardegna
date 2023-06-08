@@ -16,8 +16,11 @@
 			<p id="modalBody">Testo interno</p>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" id="saveModalSaveModalButton" class="btn btn-primary" onclick="salva(); document.getElementById('closeModalButton').click();">Salva</button>
-			<button type="button" id="closeModalSaveModalButton" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+			<div class="spinner-border text-primary" role="status" id="saveModalSpinner" style="display:none">
+			  <span class="visually-hidden">Loading...</span>
+			</div>
+			<button type="button" id="saveModalSaveButton" class="btn btn-primary" onclick="salva(); document.getElementById('closeModalButton').click();">Salva</button>
+			<button type="button" id="closeModalCloseButton" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
 		  </div>
 		</div>
 	  </div>

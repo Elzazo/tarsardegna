@@ -315,8 +315,9 @@
 	  }
 	  
 	  function salva() {
-		
+		setSpinner("saveModal", true);
 		inviaDati();
+		setSpinner("saveModal", false);
 	  }
 	  
 	  
@@ -502,38 +503,44 @@
 		  }
 	  }
 	  
-	  function setUnsetColumnBorderBold(table, bold = true) {
+	  function setUnsetColumnBorderBold(table, bold = true, prefix = "") {
 		  if (today == -1) {
 			return; 
 		}
 		// si salta la prima colonna e quindi il numero del giorno è l'indice corretto
 		// se va saltata la riga della colonna che contiene la freccia a sinistra aggiungiamo 1
-		var colIndex =  document.getElementById('leftArrow') === null ? today : today + 1;
+		let colIndex =  document.getElementById(prefix+'leftArrow') === null ? today : today + 1;
 		console.log("setUnsetColumnBorderBold(table, bold) tableId: "+table.id+", bold: "+bold+", Today:"+today);
-		var size = bold ? 5 : 1;
-		var color = bold ? "lime" : "black";
+		let size = bold ? 5 : 1;
+		let color = bold ? "lime" : "black";
 		// Itera su tutte le righe della tabella, a partire dalla seconda riga (prima header)
 		let len = table.rows.length - 2;
 		console.log("setUnsetColumnBorderBold numero delle celle da impostare per bold:"+len);
-		var innerStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+";";
-		for (var i = 1; i < len; i++) { //l'ultima riga contiene i bottoni
+		const innerStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+";";
+		for (let i = 1; i < len; i++) { //l'ultima riga contiene i bottoni
 		  // Seleziona la cella corrispondente alla colonna desiderata
-		  var cell = table.rows[i].cells[colIndex];
-		  console.log("Applico lo stile "+innerStyle+" alla cella "+cell.id);
+		  let cell = table.rows[i].cells[colIndex];
+		  console.log("setUnsetColumnBorderBold Applico lo stile "+innerStyle+" alla cella "+cell.id);
 		  // Applica lo stile
 		  cell.style = innerStyle;
 		}
 		
-		document.getElementById("th-"+today).style = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-top: "+size+"px solid "+color+";"
-		table.rows[len].cells[colIndex].style = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-bottom: "+size+"px solid "+color+";";
+		let headCellStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-top: "+size+"px solid "+color+";";
+		let headCell = document.getElementById(prefix+"th-"+today);
+        console.log("setUnsetColumnBorderBold Applico lo stile "+headCellStyle+" alla cella di testa "+headCell.id);
+		headCell.style = headCellStyle;
+		let footCellStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-bottom: "+size+"px solid "+color+";";
+		let footCell = table.rows[len].cells[colIndex];
+        console.log("Applico lo stile "+footCellStyle+" alla cella di coda "+footCell.id);
+		footCell.style = footCellStyle;
 	  }
 	  
-	  function rimuoviColonnaOggiGrassetto(table = document.getElementById("calendarTable")) {
-		setUnsetColumnBorderBold(table, false);
+	  function rimuoviColonnaOggiGrassetto(table = document.getElementById("calendarTable"), prefix = "") {
+		setUnsetColumnBorderBold(table, false, prefix);
 	  }
 	  
-	  function mettiColonnaOggiInGrassetto(table = document.getElementById("calendarTable")) {
-		setUnsetColumnBorderBold(table, true);
+	  function mettiColonnaOggiInGrassetto(table = document.getElementById("calendarTable"), prefix = "") {
+		setUnsetColumnBorderBold(table, true, prefix);
 	  }
 	  
 	  function setTitle() {
@@ -617,13 +624,6 @@
 			var successivo = true, precedente = false;
 			aggiungiBottoneMese(precedente);
 			aggiungiBottoneMese(successivo);
-			// Esegui una funzione ogni 1 secondo
-			/*const interval = setInterval(function() {
-				if (leftComplete && rightComplete) {
-					clearInterval(interval);
-					fireCustomEvent(AFTER_LOAD_EVENT_NAME);
-				}
-			}, 50);*/
 	  }
 	  
 	  function setProperSaveButtonColspan(){
@@ -644,7 +644,6 @@
 		  setShorterFooter();
 		  setTitle();
 		  setProperSaveButtonColspan();
-		  computeCalendarAsImage();
 	  }
 	  
 	  function esportaExcel() {
@@ -749,19 +748,39 @@
 	
 	var imgData;
 	
+	function cloneTable(sourceTable, idPrefix = clonedPrefix){
+		const clonedTable = sourceTable.cloneNode(true);
+		clonedTable.id = idPrefix + "CalendarTable";
+		// Recupera tutti gli elementi con ID nella tabella clonata
+		const clonedElements = clonedTable.querySelectorAll("[id]");
+		// Aggiunge la stringa "cloned" agli ID degli elementi clonati
+		clonedElements.forEach(function(element) {
+			let originalId = element.id;
+			let clonedId = idPrefix + originalId;
+			element.id = clonedId;
+			console.log("cloned cell id "+clonedId);
+		});
+		return clonedTable;
+	}
+	
+	const clonedPrefix = "cloned-";
+	
+	function cloneCalendarTable() {
+		return cloneTable(document.getElementById('calendarTable'), clonedPrefix);
+	}
+	
 	function computeCalendarAsImage() {
-		let clonedTable = document.getElementById('calendarTable').cloneNode(true);
-		clonedTable.id="clonedCalendarTable";
-        document.body.appendChild(clonedTable);
-		rimuoviColonnaOggiGrassetto(clonedTable);
+		const clonedTable = cloneCalendarTable();
+		const par = document.getElementById("calendarTableDiv");
+		par.appendChild(clonedTable);
+		rimuoviColonnaOggiGrassetto(clonedTable, clonedPrefix);
 		rimuoviPrimaEdUltimaColonna(clonedTable);
 		
 		html2canvas(clonedTable).then(function (canvas) {
 			// Convertire il canvas in un'immagine
 		   console.log("getCalendarTableAsImageTag() Conversione completata");
 		   imgData = canvas.toDataURL();
-		   mettiColonnaOggiInGrassetto(clonedCalendarTable);
-		   document.body.removeChild(clonedTable);
+		   par.removeChild(clonedTable);
 		});	
 	}
 		
@@ -778,14 +797,10 @@
 	
 	function resetSendEmailButtonLogic() {
 		setSpinner("afterSaveModal", false);
-		//document.getElementById("afterSaveModalSaveButton").style="display:initial";
-		//document.getElementById("afterSaveModalSpinner").style="display:none";
 	}
 	
 			
 	function sendEmailButtonLogic() {
-		//document.getElementById("afterSaveModalSaveButton").style="display:none";
-		//document.getElementById("afterSaveModalSpinner").style="display:initial";
 		setSpinner("afterSaveModal", true);
 		sendEmail(resetSendEmailButtonLogic);
 	}
@@ -838,21 +853,6 @@
 	  let mailtoLink = 'mailto:' + encodedRecipients + '?cc=' + encodedCC + '&subject=' + encodedSubject ;//+ '&body=' + encodedContent;
 	  console.log(mailtoLink);
 	  window.location.href = mailtoLink;
-	/*
-	  // Crea il pulsante al volo
-	  let button = document.createElement('button');
-	  button.innerText = 'Apri Mail';
-
-	  // Imposta il CSS per rendere il pulsante invisibile
-	  button.style.display = 'none'; // o button.style.visibility = 'hidden';
-
-	  // Aggiungi il gestore di eventi onclick al pulsante
-	  button.onclick = function() {
-		
-	  };
-
-	  // Aggiungi il pulsante al documento
-	  document.body.appendChild(button); */
 	}
 
 	

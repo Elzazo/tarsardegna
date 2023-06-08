@@ -89,28 +89,29 @@
 					  </thead>
 					  <tbody>
 					  <?php 
+					        // data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top"
 							foreach ($nomiRighe as $key => $value) {
 								echo "<tr>\n";
 								echo "<th>$value</th>\n";
 								if (0 == $key) {
 									for ($i = 1; $i <= $days; $i++) {
-										echo "<td id='scadenze-".$i."'/>";
+										echo "<td data-bs-toggle='tooltip' title='Fare click sulla cella per modificare il contenuto' id='scadenze-".$i."'/>";
 									}
 								}else if (1 == $key) {
 									for ($i = 1; $i <= $days; $i++) {
-										echo "<td id='presidente-".$i."' class='cella'/>";
+										echo "<td data-bs-toggle='tooltip' title='Usare il tasto sinistro per impostare o rimuovere la presenza nel giorno' id='presidente-".$i."' class='cella'/>";
 									}
 								}else if (2 == $key) {
 									for ($i = 1; $i <= $days; $i++) {
-										echo "<td id='sg-".$i."'/>";
+										echo "<td data-bs-toggle='tooltip' title='Fare click sulla cella per modificare il contenuto' id='sg-".$i."'/>";
 									}
 								}else {
 									for ($i = 1; $i <= $days; $i++) {
-										echo "<td class='cella' id='cella-".($key-2)."-".$i."'></td>\n";
+										echo "<td data-bs-toggle='tooltip' title='Usare il tasto sinistro o destro per cambiare i valori' class='cella' id='cella-".($key-2)."-".$i."'></td>\n";
 									}
-									echo "<td id='presUfficio-".($key-2)."'/>\n";
-									echo "<td id='ferie-".($key-2)."'/>\n";
-									echo "<td id='percPresInd-".($key-2)."'/>";
+									echo "<td data-bs-toggle='tooltip' title='Numero di giorni lavorativi nel mese' id='presUfficio-".($key-2)."'/>\n";
+									echo "<td data-bs-toggle='tooltip' title='Giorni di ferie richiesti' id='ferie-".($key-2)."'/>\n";
+									echo "<td data-bs-toggle='tooltip' title='% presenza in ufficio nel mese' id='percPresInd-".($key-2)."'/>";
 								}
 								if (3 > $key){
 									echo "<td/><td/><td/>";
