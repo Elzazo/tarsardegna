@@ -210,7 +210,7 @@
 		aggiornaMatriceAttuale(cella.getAttribute("id"));
 	  }
 	  
-	  function getLog(indiceMatrice, nuovoValore, giorno) {
+	  function getLog(indiceMatrice, vecchioValore, nuovoValore, giorno) {
 		  let log = "";
 		  if (indiceMatrice == 0) {
 			log = (nuovoValore == "" ? "Rimossa scadenza da": "Nuova scadenza: '"+ nuovoValore+"'") + giorno + ".";
@@ -218,6 +218,8 @@
 			log = "Il Presidente "+ (nuovoValore === undefined || nuovoValore === 'A' ? "non": "") +" sarà presente" + giorno + ".";
 		  } else if (indiceMatrice == 2){
 			log = (nuovoValore === undefined || nuovoValore === '' ? "Rimosso appunto SG per": "Nuovo appunto per SG: '"+nuovoValore+"'") + giorno + ".";
+		  }else if (vecchioValore = "T") {
+		  	log = (nomiRighe[indiceMatrice] + " non sarà più in turno sabato "+ giorno +".");
 		  }else {
 		  	log = (nomiRighe[indiceMatrice] + " " + ((frasi[nuovoValore] === undefined) ?   "sarà eseguito da " + nuovoValore : frasi[nuovoValore]) + giorno +".");
 		  }
@@ -235,7 +237,7 @@
 				var valore1 = matrice1[i][j];
 				var valore2 = matrice2[i][j];
 				console.log("confrontaMatrici ["+i+"]["+j+"] vecchio valore:"+matrice1[i][j]+", nuovo valore:"+matrice2[i][j]);
-				var log = getLog(i, valore2, " giorno " + (j+1) + " "+itMonths[month])
+				var log = getLog(i, valore1, valore2, " giorno " + (j+1) + " "+itMonths[month])
 				console.log(log);
 				differenze.push({riga: i+1, colonna: j+1, valore1: matrice1[i][j], valore2: matrice2[i][j], log: log});
 			  }
@@ -749,7 +751,7 @@
 		let img = getCalendarTableAsImageTag();
 		let formData = new FormData();
 		formData.append("oggetto", "Programmazione presenze ufficio");
-		formData.append("corpo", "<html><head/><body>"+rimpiazzaAccentate(comparisonContent)+"<br/>"+img.outerHTML+"</body></html>");
+		formData.append("corpo", "<html><head/><body>Modifiche rispetto al precedente inoltro<br/>"+rimpiazzaAccentate(comparisonContent)+"<br/>"+img.outerHTML+"</body></html>");
 		formData.append("mittente", "a.lezza@giustizia-amministrativa.it");
 		formData.append("distributionListTo", "dipendenti");
 		formData.append("distributionListCc", "sg");
