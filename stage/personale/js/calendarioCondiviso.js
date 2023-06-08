@@ -315,6 +315,7 @@
 	  }
 	  
 	  function salva() {
+		
 		inviaDati();
 	  }
 	  
@@ -770,15 +771,22 @@
 		return img;
 	}
 	
+	function setSpinner(modalId, set = true) {
+		document.getElementById(modalId + "SaveButton").style = set ? "display:none" : "display:initial";
+		document.getElementById(modalId + "Spinner").style= set ? "display:initial" : "display:none";
+	}
+	
 	function resetSendEmailButtonLogic() {
-		document.getElementById("afterSaveSaveModalButton").style="display:initial";
-		document.getElementById("afterSaveSpinner").style="display:none";
+		setSpinner("afterSaveModal", false);
+		//document.getElementById("afterSaveModalSaveButton").style="display:initial";
+		//document.getElementById("afterSaveModalSpinner").style="display:none";
 	}
 	
 			
 	function sendEmailButtonLogic() {
-		document.getElementById("afterSaveSaveModalButton").style="display:none";
-		document.getElementById("afterSaveSpinner").style="display:initial";
+		//document.getElementById("afterSaveModalSaveButton").style="display:none";
+		//document.getElementById("afterSaveModalSpinner").style="display:initial";
+		setSpinner("afterSaveModal", true);
 		sendEmail(resetSendEmailButtonLogic);
 	}
 			

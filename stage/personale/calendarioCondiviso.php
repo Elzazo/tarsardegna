@@ -208,11 +208,11 @@
 				<p id="afterSaveModalBody"/>
 			  </div>
 			  <div class="modal-footer">
-			    <div class="spinner-border text-primary" role="status" id="afterSaveSpinner" style="display:none">
+			    <div class="spinner-border text-primary" role="status" id="afterSaveModalSpinner" style="display:none">
 				  <span class="visually-hidden">Loading...</span>
 				</div>
-				<button type="button" class="btn btn-primary" id="afterSaveSaveModalButton" onclick="sendEmailButtonLogic();">Invia E-mail</button>
-				<button type="button" class="btn btn-secondary" id="afterSaveCloseModalButton" onclick="showHideModal('afterSaveModal', false);">Chiudi</button>				
+				<button type="button" class="btn btn-primary" id="afterSaveModalSaveButton" onclick="sendEmailButtonLogic();">Invia E-mail</button>
+				<button type="button" class="btn btn-secondary" id="afterSaveModalCloseButton" onclick="showHideModal('afterSaveModal', false);">Chiudi</button>				
 			  </div>
 			</div>
 		  </div>
