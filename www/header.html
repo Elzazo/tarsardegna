@@ -62,6 +62,38 @@ function setDirty(trueForDirty) { dirty = trueForDirty; }
 function isDirty() { return dirty; }
 
 
+function getFileContentWithAjaxSync(file) {
+	let xhr = new XMLHttpRequest();
+	console.log("doAjaxSyncCall("+file+") Eseguo chiamata AJAX sincrona");
+	xhr.open('GET', file, false); // Imposta l'attributo async su false
+	xhr.send();
+	return xhr.status === 200 ? xhr.responseText : undefined;
+}
+
+function toTokenizedString(stringToConvert, splitToken = " ", mergeToken = " ") {
+	let lines = stringToConvert.split(splitToken); // Divide il testo a seconda dello splitToken
+	console.log(lines);
+	let combinedString = lines.join(mergeToken); // Unisce le righe utilizzando il mergeToken
+	console.log(combinedString);
+	return combinedString;
+}
+
+function removeTrailingColumnsFromTable(table) {
+	  // Ottieni tutte le righe della tabella
+	  let rows = table.rows;
+
+	  // Itera su tutte le righe della tabella
+	  for (let i = 0; i < rows.length; i++) {
+		let row = rows[i];
+
+		// Rimuovi la prima colonna (indice 0)
+		row.deleteCell(0);
+
+		// Rimuovi l'ultima colonna (indice lunghezza riga - 1)
+		row.deleteCell(row.cells.length - 1);
+	  }
+}
+
 </script>
 
 

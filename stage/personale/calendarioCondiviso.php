@@ -14,7 +14,9 @@
 			  var today = <?php echo $day; ?>;
 			  var month = <?php echo $month; ?>;
 			  var year = <?php echo $year; ?>;
-			  <?php $days = cal_days_in_month(CAL_GREGORIAN, $month, $year);  ?>; //giorni del mese
+			  <?php $days = cal_days_in_month(CAL_GREGORIAN, $month, $year);  ?>; //giorni del mese		  
+			  
+			  <?php echo file_get_contents('js\calendarioCondivisoConsts.js'); ?>
 			  <?php echo file_get_contents('js\calendarioCondiviso.js'); ?>
 			  <?php
 				// Apriamo il file in lettura

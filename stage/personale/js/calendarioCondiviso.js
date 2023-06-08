@@ -1,8 +1,5 @@
-	
 	var matrice = [];
 	var matriceAttuale = [];
-	var itMonths=["", "gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
-	var daysMonth = [0, 31, 28, 31, 30, 31, 30 , 31 , 31, 30, 31, 30, 31];
 	if (year % 4 == 0) {
 		// anno bisestile
 		daysMonth[2] = 29;
@@ -13,16 +10,8 @@
 	var nomiRighe = [];
 	var days = daysMonth[month];
 	
-	var frasi = []
-	frasi["X"]="sarà presente in ufficio";
-	frasi["P"]="sarà presente in sede";
-	frasi["A"]="sarà assente";
-	frasi["T"]="sarà in turno sabato";
-	frasi["F"]="sarà in ferie";
-	frasi["SW"]="sarà in smart working";
-	frasi["R"]="sarà in recupero turno del sabato";
 	
-	var indiciTabella = new Map();
+	const indiciTabella = new Map();
 	indiciTabella.set('presidente', 1);
 	indiciTabella.set('sg', 2);
 	// cella sarà gestito a parte
@@ -36,6 +25,7 @@
 	indiciTabella.set('Protocollo', 7 + numDipendenti + 3);         
 	
 	function getMatrixIdxFromElementId(id){
+		console.log("getMatrixIdxFromElementId("+id+")");
 		if (id.startsWith("cella")){
 			var idx = parseInt(id.split("-")[1]);
 			idx +=2;
@@ -80,9 +70,8 @@
 	
 	
 	function aggiornaMatriceAttuale(id) {
-		var actualFn = "aggiornaMatriceAttuale("+id+") ";
-		var idx = getMatrixIdxFromElementId(id); var day = getDayFromElementId(id);
-		//TODO: test getMatrixIdxFromElementId call
+		const actualFn = "aggiornaMatriceAttuale("+id+") ";
+		const idx = getMatrixIdxFromElementId(id); let day = getDayFromElementId(id);
 		//TODO: add handling of substitution				
 		console.log(actualFn + "id: "+id+", idx="+idx+", day="+day);
 		day = day - 1;
@@ -95,12 +84,12 @@
 			console.log(actualFn + "valore da attuale:"+matriceAttuale[idx][day]);
 			matriceAttuale[idx][day]=document.getElementById(id).getAttribute("valore");
 		}
-		var comparisonResult = confrontaMatrici(matrice, matriceAttuale);
-		var diff = comparisonResult.length;
+		const comparisonResult = confrontaMatrici(matrice, matriceAttuale);
+		const diff = comparisonResult.length;
 		setDirty(diff > 0);
-		var newText = "Rilevat"+ (diff == 1 ? "a": "e") + " <strong>" +diff+ "</strong> variazion"+ (diff == 1 ? "e": "i") +"<br><br>"; 
+		let newText = "Rilevat"+ (diff == 1 ? "a": "e") + " <strong>" +diff+ "</strong> variazion"+ (diff == 1 ? "e": "i") +"<br><br>"; 
 		console.log(comparisonResult);
-		for (var i=0; i < diff; i++){
+		for (let i=0; i < diff; i++){
 			newText = newText + comparisonResult[i].log + "<br>" ;
 		}
 		setSaveModalBody(newText);
@@ -164,80 +153,30 @@
 	  
 	  function impostaClasse(cella, nuovoValore){
 		    //console.log("impostaClasse("+cella+","+nuovoValore+")");
+			// niente stile per i div con le combo
 		    if (cella.id.startsWith("div")) {
 				return;
 			}
-			cella.classList.remove("celeste", "bianco", "verde", "gialla", "rossa", "arancione");
-			if (nuovoValore === "X" || nuovoValore === "T") {
-			  cella.classList.add("celeste");
-			} else if (nuovoValore === "A" || nuovoValore === "SW") {
-			  cella.classList.add("bianco");
-			} else if (nuovoValore === "F") {
-			  cella.classList.add("verde");
-			}else if (nuovoValore === "R") {
-			  cella.classList.add("arancione");
-			}else if (nuovoValore === "D") {
-			  cella.classList.add("rossa");
-			}else if (nuovoValore === "S") {
-			  cella.classList.add("gialla");
-			}else if (nuovoValore === "P") {
-			  cella.classList.add("giallina");
-			}
+			rimuoviClassiCella(cella);
+			impostaClasseCellaDaValore(cella, nuovoValore);
+	  }
+	  
+	
+	  function cambiaValore(cella, ar = NUOVI_VALORI_AVANTI) {
+			var valoreAttuale = cella.getAttribute("valore");
+			var nuovoValore = ar[(ar.indexOf(valoreAttuale) + 1) % ar.length];
+			cella.setAttribute("valore", nuovoValore);
+			cella.innerHTML = nuovoValore;
+			
+			rimuoviClassiCella(cella);
+			impostaClasseCellaDaValore(cella, nuovoValore);
+			calcolaPercentualeUfficio(getLastSubstringFromId(cella));
+			aggiornaMatriceAttuale(cella.id);
 	  }
 	  
 	  function cambiaValoreIndietro(cella) {
-			var valoreAttuale = cella.getAttribute("valore");
-			var nuoviValori = ["F", "R","A", "SW", "X"];
-			var nuovoValore = nuoviValori[(nuoviValori.indexOf(valoreAttuale) + 1) % nuoviValori.length];
-			cella.setAttribute("valore", nuovoValore);
-			cella.innerHTML = nuovoValore;
-			
-			// Rimuovi le classi precedenti e aggiungi la nuova classe in base al valore
-			cella.classList.remove("celeste", "bianco", "verde", "gialla", "rossa", "arancione");
-			if (nuovoValore === "X" || nuovoValore === "T") {
-			  cella.classList.add("celeste");
-			} else if (nuovoValore === "A" || nuovoValore === "SW") {
-			  cella.classList.add("bianco");
-			} else if (nuovoValore === "F") {
-			  cella.classList.add("verde");
-			}else if (nuovoValore === "R") {
-			  cella.classList.add("arancione");
-			}
-			
-			var id = cella.getAttribute("id");
-			// aggiorno le percentuali solo se cambia un dipendente
-			var subStrings = cella.getAttribute("id").split("-");
-			var lastSubstring = subStrings[subStrings.length - 1];
-			calcolaPercentualeUfficio(lastSubstring);
-			aggiornaMatriceAttuale(id);
-		 }
-	
-	  function cambiaValore(cella) {
-			var valoreAttuale = cella.getAttribute("valore");
-			var nuoviValori = ["X", "SW", "A", "R", "F"];
-			var nuovoValore = nuoviValori[(nuoviValori.indexOf(valoreAttuale) + 1) % nuoviValori.length];
-			cella.setAttribute("valore", nuovoValore);
-			cella.innerHTML = nuovoValore;
-			
-			// Rimuovi le classi precedenti e aggiungi la nuova classe in base al valore
-			cella.classList.remove("celeste", "bianco", "verde", "gialla", "rossa", "arancione");
-			if (nuovoValore === "X" || nuovoValore === "T") {
-			  cella.classList.add("celeste");
-			} else if (nuovoValore === "A" || nuovoValore === "SW") {
-			  cella.classList.add("bianco");
-			} else if (nuovoValore === "F") {
-			  cella.classList.add("verde");
-			}else if (nuovoValore === "R") {
-			  cella.classList.add("arancione");
-			}
-			
-			var id = cella.getAttribute("id");
-			// aggiorno le percentuali solo se cambia un dipendente
-			var subStrings = cella.getAttribute("id").split("-");
-			var lastSubstring = subStrings[subStrings.length - 1];
-			calcolaPercentualeUfficio(lastSubstring);
-			aggiornaMatriceAttuale(id);
-		 }
+			cambiaValore(cella, NUOVI_VALORI_INDIETRO);
+	  }
 		 
 	 function turnoDelSabato(cella) {
 		var valoreAttuale = cella.getAttribute("valore");
@@ -282,7 +221,7 @@
 				if (i == 2){
 					log = ("Nuovo appunto per SG: "+valore2+" giorno " + (j+1) + " "+itMonths[month]+".");
 				}else {
-					log = (nomiRighe[i] + " " + ((frasi[valore2] === undefined) ?   "sarà eseguito da "+valore2 : frasi[valore2]) + " giorno " + (j+1) + " "+itMonths[month]+".");
+					log = (nomiRighe[i] + " " + ((frasi[valore2] === undefined) ?   "sarà eseguito da " + valore2 : frasi[valore2]) + " giorno " + (j+1) + " "+itMonths[month]+".");
 				}
 				console.log(log);
 				differenze.push({riga: i+1, colonna: j+1, valore1: matrice1[i][j], valore2: matrice2[i][j], log: log});
@@ -365,33 +304,37 @@
 	  
 	  function caricaValori()
 	  {
-			var nomiDiv = []; 
-			nomiDiv[0]="scadenze-";
-			nomiDiv[1]="presidente-";
-			nomiDiv[2]="sg-";
-			for (var i = 3; i < 16; i++) {
-			  nomiDiv[i] = "cella-"+ (i-2) + "-";
+			const nomiDiv = []; 
+			nomiDiv[0]="";
+			nomiDiv[1]="scadenze-";
+			nomiDiv[2]="presidente-";
+			nomiDiv[3]="sg-";
+			for (let i = 1; i <= numDipendenti; i++) {
+			  nomiDiv[i+3] = "cella-"+ i + "-";
 			}
 			
-			nomiDiv[16]="div-UfficioRicorsi-";
-			nomiDiv[17]="div-SegreteriaSezioneI-";
-			nomiDiv[18]="div-SegreteriaSezioneII-";
-			nomiDiv[19]="div-URP-";
-			nomiDiv[20]="div-Archivio-";
-			nomiDiv[21]="div-Personale-";
-			nomiDiv[22]="div-Economato-";
-			nomiDiv[23]="div-Protocollo-";
-			let nr = matrice.length; // numero di righe
-			let nc = matrice[0].length;
-			for (var i = 0; i < nr; i++){
+			nomiDiv[17]="div-UfficioRicorsi-";
+			nomiDiv[18]="div-SegreteriaSezioneI-";
+			nomiDiv[19]="div-SegreteriaSezioneII-";
+			nomiDiv[20]="div-URP-";
+			nomiDiv[21]="div-Archivio-";
+			nomiDiv[22]="div-Personale-";
+			nomiDiv[23]="div-Economato-";
+			nomiDiv[24]="div-Protocollo-";
+			const nr = matrice.length;
+			const nc = matrice[0].length;
+			for (let i = 1; i <= nr; i++){
 			  var prefix = nomiDiv[i];
-			  for (var j = 0; j < nc; j++){
-				  var id = prefix+(j+1);
+			  for (let j = 1; j <= nc; j++){
+				  const id = prefix+j;
+				  const val = matrice[i-1][j-1];
 				  //console.log("caricaValori() id "+id+ ", valore "+ matrice[i][j]);
-				  impostaClasse(document.getElementById(id),  matrice[i][j]);
-				  impostaValore(id, matrice[i][j]);
-				  if (i != 1  && i < 16 && (matrice[i][j] != 'S' &&  matrice[i][j] != 'D')) {
-					document.getElementById(id).innerHTML = matrice[i][j];
+				  impostaClasse(document.getElementById(id),  val);
+				  impostaValore(id, val);
+				  if (val != 'S' &&  val != 'D') {
+					if (prefix.indexOf("presidente") === -1){
+						document.getElementById(id).innerHTML = val;
+					}
 				  }
 			  }
 			}
@@ -730,22 +673,6 @@
 		
 	}
 	
-	function rimuoviPrimaEdUltimaColonna(table) {
-	  // Ottieni tutte le righe della tabella
-	  let rows = table.rows;
-
-	  // Itera su tutte le righe della tabella
-	  for (let i = 0; i < rows.length; i++) {
-		let row = rows[i];
-
-		// Rimuovi la prima colonna (indice 0)
-		row.deleteCell(0);
-
-		// Rimuovi l'ultima colonna (indice lunghezza riga - 1)
-		row.deleteCell(row.cells.length - 1);
-	  }
-	}
-	
 	var imgData;
 	
 	function cloneTable(sourceTable, idPrefix = clonedPrefix){
@@ -763,8 +690,6 @@
 		return clonedTable;
 	}
 	
-	const clonedPrefix = "cloned-";
-	
 	function cloneCalendarTable() {
 		return cloneTable(document.getElementById('calendarTable'), clonedPrefix);
 	}
@@ -774,7 +699,7 @@
 		const par = document.getElementById("calendarTableDiv");
 		par.appendChild(clonedTable);
 		rimuoviColonnaOggiGrassetto(clonedTable, clonedPrefix);
-		rimuoviPrimaEdUltimaColonna(clonedTable);
+		removeTrailingColumnsFromTable(clonedTable);
 		
 		html2canvas(clonedTable).then(function (canvas) {
 			// Convertire il canvas in un'immagine
@@ -820,28 +745,11 @@
 						);
 		
 	}
-	
-	function toTokenizedString(stringToConvert, splitToken = " ", mergeToken = " ") {
-		let lines = stringToConvert.split(splitToken); // Divide il testo a seconda dello splitToken
-		console.log(lines);
-		let combinedString = lines.join(mergeToken); // Unisce le righe utilizzando il mergeToken
-		console.log(combinedString);
-		return combinedString;
-	}
-
-
-	function doAjaxSyncCall(file) {
-		let xhr = new XMLHttpRequest();
-		console.log("doAjaxSyncCall("+file+") Eseguo chiamata AJAX sincrona");
-		xhr.open('GET', file, false); // Imposta l'attributo async su false
-		xhr.send();
-		return xhr.status === 200 ? xhr.responseText : undefined;
-	}
 
 	// non funziona a causa del body troppo grande
 	function composeMail() {
-	  let recipients = toTokenizedString(doAjaxSyncCall("consts/address/email/dipendenti.txt"), "\r\n", ";");
-	  let cc =  toTokenizedString(doAjaxSyncCall("consts/address/email/cc.txt"), "\r", ";");
+	  let recipients = toTokenizedString(getFileContentWithAjaxSync("consts/address/email/dipendenti.txt"), "\r\n", ";");
+	  let cc =  toTokenizedString(getFileContentWithAjaxSync("consts/address/email/cc.txt"), "\r", ";");
 	  let subject = 'Programmazione presenze ufficio mese di '+itMonths[month];
 	  let content = "<html><head/><body>"+getCalendarTableAsImageTag().outerHTML+"</body></html>";
 	  
