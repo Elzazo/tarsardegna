@@ -332,7 +332,7 @@
 			  if (val !== ""){
 				 showDiv(el.id);
 				 let sel = document.getElementById(el.id.replace("div", "select"));
-				 sel.value = valueToSelect;
+				 sel.value = val;
 			  }
 		  }else if (el.id.startsWith("presidente")){
 			  return;
@@ -471,7 +471,7 @@
 			  
 	  function processaMatrice() {
 		var xhr = new XMLHttpRequest();
-		  xhr.open("GET", "data/"+year+"/"+itMonths[month]+".json", true);
+		  xhr.open("GET", "data/"+year+"/"+itMonths[month]+".json?data="+ Date.now(), true); // argomento utile per evitare il comportamento con la cache
 		  xhr.onreadystatechange = function() {
 			if (xhr.readyState === 4 && xhr.status === 200) {
 			  matrice = JSON.parse(xhr.responseText);
