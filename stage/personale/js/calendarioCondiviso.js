@@ -4,6 +4,8 @@
 		// anno bisestile
 		daysMonth[2] = 29;
 	}
+	
+	
 	var numDipendenti = 15;
 	var numRows = numDipendenti + 3;
 	var lavorativi = 0;
@@ -225,10 +227,18 @@
 			log = "Il Presidente "+ (nuovoValore === undefined || nuovoValore === 'A' ? "non": "") +" sarà presente" + giorno + ".";
 		  } else if (indiceMatrice == 2){
 			log = (nuovoValore === undefined || nuovoValore === '' ? "Rimosso appunto SG per": "Nuovo appunto per SG: '"+nuovoValore+"'") + giorno + ".";
-		  }else if (vecchioValore = "T") {
-		  	log = (nomiRighe[indiceMatrice] + " non sarà più in turno sabato "+ giorno +".");
+		  }else if (indiceMatrice >=dimensioneIntestazioni && indiceMatrice < (dimensioneIntestazioni + numDipendenti)) {
+		  	if (vecchioValore == "T") {
+				log = (nomiRighe[indiceMatrice] + " non sarà più in turno sabato "+ giorno +".");
+			} else {
+				log = (nomiRighe[indiceMatrice] + " " + frasi[nuovoValore] + giorno +".");
+			}
 		  }else {
-		  	log = (nomiRighe[indiceMatrice] + " " + ((frasi[nuovoValore] === undefined) ?   "sarà eseguito da " + nuovoValore : frasi[nuovoValore]) + giorno +".");
+			  if (nuovoValore === ""){
+				log = nomiRighe[indiceMatrice] +  " non sarà più eseguito da " + vecchioValore + giorno +".";
+			  } else {
+				log = nomiRighe[indiceMatrice] +  " sarà eseguito da " + nuovoValore + giorno +".";
+			  }
 		  }
 		  return log;
 	  }
@@ -353,7 +363,6 @@
 	  function caricaValori()
 	  {
 			const nomiDiv = []; 
-			const dimensioneIntestazioni = 3;
 			nomiDiv[0]="";
 			nomiDiv[1]="scadenze-";
 			nomiDiv[2]="presidente-";

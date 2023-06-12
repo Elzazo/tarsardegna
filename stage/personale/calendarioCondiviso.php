@@ -24,8 +24,10 @@
 				$labels = array();
 				// Verifichiamo se il file è stato aperto correttamente
 				{
+					//var numDipendenti = 15;
+					//var numRows = numDipendenti + 3;
 					$nomiFile=["intestazioni", "dipendenti", "intestazioniSostituzioni"]; //dipendenti tenuto fino alla migrazione dei nuovi json
-					$i = 0; 
+					$i = 0; $idx = 0; $quanteRighe=[0,0,0];
 					foreach ($nomiFile as &$nomeFile) {
 						$handle = fopen("consts/".$nomeFile.".txt", "r");
 						if ($handle) {
@@ -41,15 +43,20 @@
 									array_push($nomiRighe, $line);
 									$i++;
 								}
+								$quanteRighe[$idx]++;
 							}
 
 							// Chiudiamo il file
 							fclose($handle);
+							$idx++;
 						} else {
 							// In caso di errore nell'apertura del file
 							echo "Impossibile aprire il file ".nomeFile.".txt!";
 						}
 					}
+					echo "const dimensioneIntestazioni = $quanteRighe[0];";
+					echo "numDipendenti = $quanteRighe[1];\n";
+					echo "numRows = numDipendenti + dimensioneIntestazioni;\n";					
 				}
 				
 				
