@@ -19,10 +19,16 @@
 				  $giorno = (($h + $l - 7 * $m + 114) % 31) + 1;
 				  return date("Y-m-d", strtotime("$anno-$mese-$giorno"));
 				}
+				
+	function contaRighe($filename){
+		return count(file($filename));
+	}
 	
 	
 	setlocale(LC_TIME, 'it_IT');
-	$numDipendenti = 13;
+	$numDipendenti = contaRighe("consts/dipendenti.txt");
+	$numHeader = contaRighe("consts/intestazioni.txt");
+	$numSostituzioni = contaRighe("consts/intestazioniSostituzioni.txt");;
 	$year = 2023;
 	$data_pasqua = data_pasqua($year);
 	$it_months=["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
@@ -68,7 +74,10 @@
 		
 		$lav = 0; //calcolo giorni lavorativi del mese
 		// Genera gli array con i valori "X", "S" e "D" per ogni giorno del mese 
-		for ($i = 0; $i < (3 + $numDipendenti); $i++) {
+		$num_righe = $numHeader + $numDipendenti;
+		$num_righe_totali = $numHeader + $numDipendenti + $numSostituzioni;
+		$rigaPresidente = 1;
+		for ($i = 0; $i < $num_righe_totali; $i++) {
 			$row = array();
 			for ($j = 1; $j <= $num_days; $j++) {
 				$date = $year.'-'.str_pad($m, 2, "0", STR_PAD_LEFT).'-'.str_pad($j, 2, "0", STR_PAD_LEFT);
@@ -80,11 +89,12 @@
 					if ($weekday == 6) {
 						$row[] = "S";
 					} else if ($weekday <= 5) {
-						if ($i == 1){
-							$row[] = "A";
-						}
-						else if ($i > 2){
+						if ($i >= $numHeader && $i < $num_righe){ // dipendenti
 							$row[] = "X";
+						}else if ($i == $rigaPresidente){ // presidente
+							$row[] = "A";
+						}else if ($i >= $num_righe){ //sostituzioni
+							$row[] = "";
 						}else {
 							if ($i == 0) {
 								$lav++;

@@ -4,7 +4,7 @@
 		// anno bisestile
 		daysMonth[2] = 29;
 	}
-	var numDipendenti = 13;
+	var numDipendenti = 15;
 	var numRows = numDipendenti + 3;
 	var lavorativi = 0;
 	var nomiRighe = [];
@@ -143,13 +143,20 @@
 	  }
 	  
 	  function impostaValore(id, nuovoValore){
-		  //console.log("impostaValore("+id+", "+nuovoValore+")");
+		  console.log("impostaValore("+id+", "+nuovoValore+")");
 		  document.getElementById(id).setAttribute("valore", nuovoValore);
 		  if (id.startsWith("div")) {
+			  // gestione combo
+			  if ("D" === nuovoValore || "S" === nuovoValore){
+				  console.log("impostaValore Nuovo valore "+nuovoValore+", ritorno");
+				  return;
+			  }
+			  
 			  var selectId = id.replace("div", "select");
 			  document.getElementById(selectId).value = nuovoValore;
 			  nuovoValore == '' ? hideDiv(id) : showDiv(id);
 			  if (nuovoValore != ''){
+				  console.log("impostaValore imposto il valore dello style.width ad auto");
 				  document.getElementById(selectId).style.width = 'auto';
 			  }
 		  }
@@ -317,40 +324,66 @@
 
 	  }
 	  
+	  function setInnerValue(el, val){
+		  if (val === "S" || val === "D") {
+			  return;
+		  }
+		  if (el.id.startsWith("div-")){
+			  if (val !== ""){
+				 showDiv(el.id);
+				 let sel = document.getElementById(el.id.replace("div", "select"));
+				 sel.value = valueToSelect;
+			  }
+		  }else if (el.id.startsWith("presidente")){
+			  return;
+		  }else {
+			  el.innerHTML = val;
+		  }
+	  }
+	  
+	  function removeMouseEvents(el, val) {
+		  if (el.id.startsWith("div") && (val === "S" || val === "D")) {
+			el.parentElement.removeAttribute("onmouseover");
+			el.parentElement.removeAttribute("onmouseout");
+		  }
+	  }
+	  
+	  
+	  
 	  function caricaValori()
 	  {
 			const nomiDiv = []; 
+			const dimensioneIntestazioni = 3;
 			nomiDiv[0]="";
 			nomiDiv[1]="scadenze-";
 			nomiDiv[2]="presidente-";
 			nomiDiv[3]="sg-";
 			for (let i = 1; i <= numDipendenti; i++) {
-			  nomiDiv[i+3] = "cella-"+ i + "-";
+			  nomiDiv[i + dimensioneIntestazioni] = "cella-"+ i + "-";
 			}
 			
-			nomiDiv[17]="div-UfficioRicorsi-";
-			nomiDiv[18]="div-SegreteriaSezioneI-";
-			nomiDiv[19]="div-SegreteriaSezioneII-";
-			nomiDiv[20]="div-URP-";
-			nomiDiv[21]="div-Archivio-";
-			nomiDiv[22]="div-Personale-";
-			nomiDiv[23]="div-Economato-";
-			nomiDiv[24]="div-Protocollo-";
+			nomiDiv[dimensioneIntestazioni + numDipendenti + 1] = "div-UfficioRicorsi-";
+			nomiDiv[dimensioneIntestazioni + numDipendenti + 2] = "div-SegreteriaSezioneI-";
+			nomiDiv[dimensioneIntestazioni + numDipendenti + 3] = "div-SegreteriaSezioneII-";
+			nomiDiv[dimensioneIntestazioni + numDipendenti + 4] = "div-URP-";
+			nomiDiv[dimensioneIntestazioni + numDipendenti + 5] = "div-Archivio-";
+			nomiDiv[dimensioneIntestazioni + numDipendenti + 6] = "div-Personale-";
+			nomiDiv[dimensioneIntestazioni + numDipendenti + 7] = "div-Economato-";
+			nomiDiv[dimensioneIntestazioni + numDipendenti + 8] = "div-Protocollo-";
 			const nr = matrice.length;
 			const nc = matrice[0].length;
+			//console.log("caricaValori() Matrice da processare con "+nr+" righe e "+nc+" colonne");
 			for (let i = 1; i <= nr; i++){
 			  var prefix = nomiDiv[i];
 			  for (let j = 1; j <= nc; j++){
 				  const id = prefix+j;
 				  const val = matrice[i-1][j-1];
+				  const el = document.getElementById(id);
 				  //console.log("caricaValori() id "+id+ ", valore "+ matrice[i][j]);
-				  impostaClasse(document.getElementById(id),  val);
+				  impostaClasse(el,  val);
 				  impostaValore(id, val);
-				  if (val != 'S' &&  val != 'D') {
-					if (prefix.indexOf("presidente") === -1){
-						document.getElementById(id).innerHTML = val;
-					}
-				  }
+				  setInnerValue(el, val);
+				  removeMouseEvents(el, val);				  
 			  }
 			}
 	  }
@@ -643,9 +676,12 @@
   }
   
    function hideDiv(id) { 
-	//console.log("hideDiv("+id+") div_onmouseout"); 
-	document.getElementById(id).style.display = (document.getElementById(id.replace("div", "select")).value == '' ? 'none' : 'block');
-	//aggiornaMatriceAttuale(id);
+	//console.log("hideDiv("+id+") div_onmouseout");
+	const sel = document.getElementById(id.replace("div", "select"));
+	if (sel != undefined && sel.value !== undefined ) {
+		document.getElementById(id).style.display = (document.getElementById(id.replace("div", "select")).value == '' ? 'none' : 'block');
+		//aggiornaMatriceAttuale(id);
+	}
    }
    
    function setSelect(el) {
