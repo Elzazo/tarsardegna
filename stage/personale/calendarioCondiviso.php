@@ -24,8 +24,6 @@
 				$labels = array();
 				// Verifichiamo se il file è stato aperto correttamente
 				{
-					//var numDipendenti = 15;
-					//var numRows = numDipendenti + 3;
 					$nomiFile=["intestazioni", "dipendenti", "intestazioniSostituzioni"]; //dipendenti tenuto fino alla migrazione dei nuovi json
 					$i = 0; $idx = 0; $quanteRighe=[0,0,0];
 					foreach ($nomiFile as &$nomeFile) {
@@ -41,8 +39,8 @@
 									array_push($labels, $line);
 								}else {
 									array_push($nomiRighe, $line);
-									$i++;
 								}
+								$i++;
 								$quanteRighe[$idx]++;
 							}
 
@@ -168,7 +166,7 @@
 								for ($i = 1; $i <= $days; $i++) {
 									$nomeDiv = str_replace(' ', '', trim($labels[$idx]));
 									$nomeDiv = str_replace('\n', '', trim($nomeDiv));
-									echo "<td onmouseover='showDiv(\"div-$nomeDiv-$i\");' onmouseout='hideDiv(\"div-$nomeDiv-$i\");'>";
+									echo "<td id='td-$nomeDiv-$i' onmouseover='showDiv(\"div-$nomeDiv-$i\");' onmouseout='hideDiv(\"div-$nomeDiv-$i\");'>";
 									echo "<div id='div-$nomeDiv-$i' style='display:none' valore=''>";
 									echo "<select id='select-$nomeDiv-$i' style='width: 30px;' onchange='setSelect(this);'>";
 									echo "<option/>";

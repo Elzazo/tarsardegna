@@ -90,6 +90,7 @@
 						$row[] = "S";
 					} else if ($weekday <= 5) {
 						if ($i >= $numHeader && $i < $num_righe){ // dipendenti
+							// TODO: aggiungere gestione sw
 							$row[] = "X";
 						}else if ($i == $rigaPresidente){ // presidente
 							$row[] = "A";

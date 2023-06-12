@@ -154,12 +154,13 @@
 				  return;
 			  }
 			  
-			  var selectId = id.replace("div", "select");
-			  document.getElementById(selectId).value = nuovoValore;
+			  let selectId = id.replace("div", "select");
+			  let sel = document.getElementById(selectId);
+			  sel.value = nuovoValore;
 			  nuovoValore == '' ? hideDiv(id) : showDiv(id);
 			  if (nuovoValore != ''){
 				  console.log("impostaValore imposto il valore dello style.width ad auto");
-				  document.getElementById(selectId).style.width = 'auto';
+				  sel.style.width = 'auto';
 			  }
 		  }
 	  }
@@ -680,7 +681,18 @@
 			  
   function showDiv(id) { 
 	//console.log("showDiv("+id+") div_onmouseover"); 
-	document.getElementById(id).style.display='block';
+	let td = document.getElementById(id.replace("div", "td"));
+	if (td.hasAttribute("isOver")){
+		return;
+	}
+	td.setAttribute("isOver", true);
+	td.innerHTML = td.innerHTML.substring(td.innerHTML.indexOf('<'));
+	//if (td.hasAttribute("mouseOverInnerHtml")){
+	
+	//}
+	let div = document.getElementById(id);
+	div.style.display='block';
+	//div.parentElement.innerHTML = "";
 	//aggiornaMatriceAttuale(id);
   }
   
@@ -688,7 +700,16 @@
 	//console.log("hideDiv("+id+") div_onmouseout");
 	const sel = document.getElementById(id.replace("div", "select"));
 	if (sel != undefined && sel.value !== undefined ) {
-		document.getElementById(id).style.display = (document.getElementById(id.replace("div", "select")).value == '' ? 'none' : 'block');
+		let div = document.getElementById(id);
+		div.style.display = (sel.value == '' ? 'none' : 'block');
+		// imposto il valore del padre come il contenuto della select
+		let td = div.parentElement;
+		//td.setAttribute("mouseOverInnerHtml", td.innerHTML);
+		console.log("hideDiv("+id+".innerHTML: "+td.innerHTML);
+		td.innerHTML = sel.value + td.innerHTML;
+		if (td.hasAttribute("isOver")){
+			td.removeAttribute("isOver");
+		}
 		//aggiornaMatriceAttuale(id);
 	}
    }

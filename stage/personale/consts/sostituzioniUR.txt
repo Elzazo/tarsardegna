@@ -1,8 +1,8 @@
-F Basciu
-FG Cossu
-S Dessì
-F Drò
-MG Ferrara
-E Licheri
-MG Porcu
-M Sanna
+Flaviana Basciu
+Franco Cossu
+Susanna Dessì
+Federica Drò
+Maria Giuliana Ferrara
+Emma Licheri
+Maria Giulia Porcu
+Manuela Sanna
