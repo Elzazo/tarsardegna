@@ -12,6 +12,8 @@
 	var nomiRighe = [];
 	var days = daysMonth[month];
 	
+	var version = 1;
+	
 	
 	const indiciTabella = new Map();
 	indiciTabella.set('presidente', 1);
@@ -550,8 +552,8 @@
 	  }
 	  
 	  function setTitle() {
-		let ver = getFileContentWithAjaxSync("contaRevisioni.php", ["mese", "anno"], [itMonths[month], year]);
-		document.getElementById('titleId').innerHTML = "&nbsp; &nbsp;Calendario Condiviso - "+itMonths[month]+" "+year + " ver. " + ver; 
+		version = getFileContentWithAjaxSync("contaRevisioni.php", ["mese", "anno"], [itMonths[month], year]);
+		document.getElementById('titleId').innerHTML = "&nbsp; &nbsp;Calendario Condiviso - "+itMonths[month]+" "+year + " ver. " + version; 
 	  }
 	  
 	  function setMonthInterval() {
@@ -811,8 +813,8 @@
 	function sendEmail(callback = undefined) {
 		let img = getCalendarTableAsImageTag();
 		let formData = new FormData();
-		formData.append("oggetto", "Programmazione presenze ufficio");
-		formData.append("corpo", "<html><head/><body>Modifiche rispetto al precedente inoltro<br/>"+rimpiazzaAccentate(comparisonContent)+"<br/>"+img.outerHTML+"</body></html>");
+		formData.append("oggetto", "Programmazione presenze ufficio "+itMonths[month]);
+		formData.append("corpo", "<html><head/><body>Versione "+version+"<br/><br/>Modifiche rispetto al precedente inoltro<br/>"+rimpiazzaAccentate(comparisonContent)+"<br/>"+img.outerHTML+"</body></html>");
 		formData.append("mittente", "a.lezza@giustizia-amministrativa.it");
 		formData.append("distributionListTo", "dipendenti");
 		formData.append("distributionListCc", "sg");
@@ -829,7 +831,7 @@
 	  let recipients = toTokenizedString(getFileContentWithAjaxSync("consts/address/email/dipendenti.txt"), "\r\n", ";");
 	  let cc =  toTokenizedString(getFileContentWithAjaxSync("consts/address/email/cc.txt"), "\r", ";");
 	  let subject = 'Programmazione presenze ufficio mese di '+itMonths[month];
-	  let content = "<html><head/><body>"+getCalendarTableAsImageTag().outerHTML+"</body></html>";
+	  let content = "<html><head/><body>Versione "+version+"<br/>"+getCalendarTableAsImageTag().outerHTML+"</body></html>";
 	  
 	  let encodedRecipients = encodeURIComponent(recipients);
 	  let encodedCC = encodeURIComponent(cc);
