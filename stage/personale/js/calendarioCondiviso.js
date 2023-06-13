@@ -154,14 +154,16 @@
 				  return;
 			  }
 			  
-			  let selectId = id.replace("div", "select");
+			  /*let selectId = id.replace("div", "select");
 			  let sel = document.getElementById(selectId);
 			  sel.value = nuovoValore;
 			  nuovoValore == '' ? hideDiv(id) : showDiv(id);
 			  if (nuovoValore != ''){
 				  console.log("impostaValore imposto il valore dello style.width ad auto");
 				  sel.style.width = 'auto';
-			  }
+			  }*/
+			  let textDiv = document.getElementById(id.replace("div-", "div-text-"));
+			  textDiv.innerHTML = nuovoValore;
 		  }
 	  }
 	  
@@ -336,12 +338,14 @@
 	  }
 	  
 	  function setInnerValue(el, val){
+		  console.log("setInnerValue("+el.id+", "+val+")");
 		  if (val === "S" || val === "D") {
 			  return;
 		  }
 		  if (el.id.startsWith("div-")){
+			  document.getElementById(el.id.replace("div-", "div-text-")).innerHTML = val;
 			  if (val !== ""){
-				 showDiv(el.id);
+				 //showDiv(el.id);
 				 let sel = document.getElementById(el.id.replace("div", "select"));
 				 sel.value = val;
 			  }
@@ -681,15 +685,10 @@
 			  
   function showDiv(id) { 
 	//console.log("showDiv("+id+") div_onmouseover"); 
-	let td = document.getElementById(id.replace("div", "td"));
-	if (td.hasAttribute("isOver")){
-		return;
-	}
-	td.setAttribute("isOver", true);
-	td.innerHTML = td.innerHTML.substring(td.innerHTML.indexOf('<'));
-	//if (td.hasAttribute("mouseOverInnerHtml")){
-	
-	//}
+	//cancello il contenuto del div di testo
+	let textDiv = document.getElementById(id.replace("div-", "div-text-"));
+	textDiv.innerHTML="";
+	// mostro il div che contiene la combo
 	let div = document.getElementById(id);
 	div.style.display='block';
 	//div.parentElement.innerHTML = "";
@@ -700,17 +699,11 @@
 	//console.log("hideDiv("+id+") div_onmouseout");
 	const sel = document.getElementById(id.replace("div", "select"));
 	if (sel != undefined && sel.value !== undefined ) {
-		let div = document.getElementById(id);
-		div.style.display = (sel.value == '' ? 'none' : 'block');
-		// imposto il valore del padre come il contenuto della select
-		let td = div.parentElement;
-		//td.setAttribute("mouseOverInnerHtml", td.innerHTML);
-		console.log("hideDiv("+id+".innerHTML: "+td.innerHTML);
-		td.innerHTML = sel.value + td.innerHTML;
-		if (td.hasAttribute("isOver")){
-			td.removeAttribute("isOver");
-		}
-		//aggiornaMatriceAttuale(id);
+		// nascondo la combo
+		document.getElementById(id).style.display = 'none';
+		// imposto il contenuto della select come testo del div di testo
+		let textDiv = document.getElementById(id.replace("div-", "div-text-"));
+		textDiv.innerHTML = sel.value;
 	}
    }
    

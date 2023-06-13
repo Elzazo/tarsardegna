@@ -166,9 +166,10 @@
 								for ($i = 1; $i <= $days; $i++) {
 									$nomeDiv = str_replace(' ', '', trim($labels[$idx]));
 									$nomeDiv = str_replace('\n', '', trim($nomeDiv));
-									echo "<td id='td-$nomeDiv-$i' onmouseover='showDiv(\"div-$nomeDiv-$i\");' onmouseout='hideDiv(\"div-$nomeDiv-$i\");'>";
+									echo "<td id='td-$nomeDiv-$i' style='white-space: nowrap;' onmouseover='showDiv(\"div-$nomeDiv-$i\");' onmouseout='hideDiv(\"div-$nomeDiv-$i\");'>";
+									echo "<div id='div-text-$nomeDiv-$i'></div>";
 									echo "<div id='div-$nomeDiv-$i' style='display:none' valore=''>";
-									echo "<select id='select-$nomeDiv-$i' style='width: 30px;' onchange='setSelect(this);'>";
+									echo "<select id='select-$nomeDiv-$i' onchange='setSelect(this);'>";
 									echo "<option/>";
 									foreach ($options as $option){
 										$trimmedOption = trim($option);
