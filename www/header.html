@@ -48,7 +48,7 @@ window.addEventListener(AFTER_LOAD_EVENT_NAME, function() {
 										  console.log('Rendering completato');
 										  if (typeof afterLoad === 'function') {
 										  // La funzione esiste, puoi eseguire il codice qui
-										  console.log("eventListener(endOfRender): Eseguo afterLoad()");
+										  //console.log("eventListener(endOfRender): Eseguo afterLoad()");
 										  afterLoad();
 										} else {
 										  // La funzione non esiste
@@ -62,10 +62,14 @@ function setDirty(trueForDirty) { dirty = trueForDirty; }
 function isDirty() { return dirty; }
 
 
-function getFileContentWithAjaxSync(file) {
+function getFileContentWithAjaxSync(file, params = [], values = []) {
 	let xhr = new XMLHttpRequest();
-	console.log("doAjaxSyncCall("+file+") Eseguo chiamata AJAX sincrona");
-	xhr.open('GET', file, false); // Imposta l'attributo async su false
+	//console.log("doAjaxSyncCall("+file+") Eseguo chiamata AJAX sincrona");
+	let args = "?";
+	for (let i = 0; i < params.length; i++) {
+		args = args + params[i] + "=" + encodeURIComponent(values[i]) + "&";
+	}
+	xhr.open('GET', file + args, false); // Imposta l'attributo async su false
 	xhr.send();
 	return xhr.status === 200 ? xhr.responseText : undefined;
 }

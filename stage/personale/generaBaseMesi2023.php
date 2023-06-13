@@ -115,7 +115,11 @@
 		// Converti la matrice in JSON e salvala su un file
 		$json = json_encode($matrix);
 		unset($matrix);
-		$result = file_put_contents("data/".$month_name.".json", $json);
+		if (!is_dir("data/".$year."_generated/")) {
+			  // creo la directory se non esite
+			  mkdir("data/".$year."_generated/");
+		}
+		$result = file_put_contents("data/".$year."_generated/".$month_name.".json", $json);
 	
 	?>
 	</head>

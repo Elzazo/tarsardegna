@@ -145,12 +145,12 @@
 	  }
 	  
 	  function impostaValore(id, nuovoValore){
-		  console.log("impostaValore("+id+", "+nuovoValore+")");
+		  //console.log("impostaValore("+id+", "+nuovoValore+")");
 		  document.getElementById(id).setAttribute("valore", nuovoValore);
 		  if (id.startsWith("div")) {
 			  // gestione combo
 			  if ("D" === nuovoValore || "S" === nuovoValore){
-				  console.log("impostaValore Nuovo valore "+nuovoValore+", ritorno");
+				  //console.log("impostaValore Nuovo valore "+nuovoValore+", ritorno");
 				  return;
 			  }
 			  
@@ -183,7 +183,6 @@
 			var nuovoValore = ar[(ar.indexOf(valoreAttuale) + 1) % ar.length];
 			cella.setAttribute("valore", nuovoValore);
 			cella.innerHTML = nuovoValore;
-			
 			rimuoviClassiCella(cella);
 			impostaClasseCellaDaValore(cella, nuovoValore);
 			calcolaPercentualeUfficio(getLastSubstringFromId(cella));
@@ -330,7 +329,9 @@
 			// apre il prompt invio email
 			document.getElementById("afterSaveModalBody").innerHTML=getSaveModalBody();
 			// mostra la finestra modale di salvataggio
-			showHideModal('afterSaveModal');				
+			showHideModal('afterSaveModal');			
+			// reimposta il title
+			setTitle();
 		}
 		
 		
@@ -338,7 +339,7 @@
 	  }
 	  
 	  function setInnerValue(el, val){
-		  console.log("setInnerValue("+el.id+", "+val+")");
+		  //console.log("setInnerValue("+el.id+", "+val+")");
 		  if (val === "S" || val === "D") {
 			  return;
 		  }
@@ -515,28 +516,28 @@
 		// si salta la prima colonna e quindi il numero del giorno è l'indice corretto
 		// se va saltata la riga della colonna che contiene la freccia a sinistra aggiungiamo 1
 		let colIndex =  document.getElementById(prefix+'leftArrow') === null ? today : today + 1;
-		console.log("setUnsetColumnBorderBold(table, bold) tableId: "+table.id+", bold: "+bold+", Today:"+today);
+		//console.log("setUnsetColumnBorderBold(table, bold) tableId: "+table.id+", bold: "+bold+", Today:"+today);
 		let size = bold ? 5 : 1;
 		let color = bold ? "lime" : "black";
 		// Itera su tutte le righe della tabella, a partire dalla seconda riga (prima header)
 		let len = table.rows.length - 2;
-		console.log("setUnsetColumnBorderBold numero delle celle da impostare per bold:"+len);
+		//console.log("setUnsetColumnBorderBold numero delle celle da impostare per bold:"+len);
 		const innerStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+";";
 		for (let i = 1; i < len; i++) { //l'ultima riga contiene i bottoni
 		  // Seleziona la cella corrispondente alla colonna desiderata
 		  let cell = table.rows[i].cells[colIndex];
-		  console.log("setUnsetColumnBorderBold Applico lo stile "+innerStyle+" alla cella "+cell.id);
+		  //console.log("setUnsetColumnBorderBold Applico lo stile "+innerStyle+" alla cella "+cell.id);
 		  // Applica lo stile
 		  cell.style = innerStyle;
 		}
 		
 		let headCellStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-top: "+size+"px solid "+color+";";
 		let headCell = document.getElementById(prefix+"th-"+today);
-        console.log("setUnsetColumnBorderBold Applico lo stile "+headCellStyle+" alla cella di testa "+headCell.id);
+        //console.log("setUnsetColumnBorderBold Applico lo stile "+headCellStyle+" alla cella di testa "+headCell.id);
 		headCell.style = headCellStyle;
 		let footCellStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-bottom: "+size+"px solid "+color+";";
 		let footCell = table.rows[len].cells[colIndex];
-        console.log("Applico lo stile "+footCellStyle+" alla cella di coda "+footCell.id);
+        //console.log("Applico lo stile "+footCellStyle+" alla cella di coda "+footCell.id);
 		footCell.style = footCellStyle;
 	  }
 	  
@@ -549,7 +550,8 @@
 	  }
 	  
 	  function setTitle() {
-		document.getElementById('titleId').innerHTML = "&nbsp; &nbsp;Calendario Condiviso - "+itMonths[month]+" "+year; 
+		let ver = getFileContentWithAjaxSync("contaRevisioni.php", ["mese", "anno"], [itMonths[month], year]);
+		document.getElementById('titleId').innerHTML = "&nbsp; &nbsp;Calendario Condiviso - "+itMonths[month]+" "+year + " ver. " + ver; 
 	  }
 	  
 	  function setMonthInterval() {
@@ -579,7 +581,7 @@
 		  xhr.onreadystatechange = function() {
 		    if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-				  console.log('Creo il bottone con '+newMonth+" "+newYear);
+				  //console.log('Creo il bottone con '+newMonth+" "+newYear);
 				  // Crea l'URL con la query string
 				  const currentUrl = window.location.href.split('?')[0]; // removes any current arg
 				  const separator = currentUrl.includes('?') ? '&' : '?';
@@ -612,10 +614,10 @@
 				}
 				
 				if (successivo) {
-					console.log("aggiungiBottoneMese(successivo): AJAX Complete");
+					//console.log("aggiungiBottoneMese(successivo): AJAX Complete");
 					rightComplete = true;
 				}else {
-					console.log("aggiungiBottoneMese(precedente): AJAX Complete");
+					//console.log("aggiungiBottoneMese(precedente): AJAX Complete");
 					leftComplete = true;
 				}
 				
