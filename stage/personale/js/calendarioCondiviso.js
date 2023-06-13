@@ -156,14 +156,6 @@
 				  return;
 			  }
 			  
-			  /*let selectId = id.replace("div", "select");
-			  let sel = document.getElementById(selectId);
-			  sel.value = nuovoValore;
-			  nuovoValore == '' ? hideDiv(id) : showDiv(id);
-			  if (nuovoValore != ''){
-				  console.log("impostaValore imposto il valore dello style.width ad auto");
-				  sel.style.width = 'auto';
-			  }*/
 			  let textDiv = document.getElementById(id.replace("div-", "div-text-"));
 			  textDiv.innerHTML = nuovoValore;
 		  }
@@ -350,7 +342,9 @@
 			  if (val !== ""){
 				 //showDiv(el.id);
 				 let sel = document.getElementById(el.id.replace("div", "select"));
-				 sel.value = val;
+				 if (sel !== null) {
+					sel.value = val;
+				 }
 			  }
 		  }else if (el.id.startsWith("presidente")){
 			  return;
@@ -405,73 +399,6 @@
 			}
 	  }
 	  
-	  var timerId;
-	  
-	  function caricaFunzioni() {
-		  
-		  //scadenze
-		  for (var i = 1; i <= days; i++) {
-				var element = document.getElementById('scadenze-'+i); //seleziono l'elemento da modificare
-				//console.log('scadenze-'+i+", valore della matrice "+ matrice[0][i-1]);
-				if (matrice[0][i-1] != 'S' && matrice[0][i-1] != 'D'){
-					element.oninput = function() { aggiornaMatriceAttuale(this.getAttribute('id')); }; //aggiungo la funzione onchange
-					element.setAttribute("contenteditable", "true");
-				}
-		  }
-		  
-		  //presidente
-		  for (var i = 1; i <= days; i++) {
-				const currentId = 'presidente-'+i;
-				var element = document.getElementById('presidente-'+i); //seleziono l'elemento da modificare
-				//console.log('scadenze-'+i+", valore della matrice "+ matrice[0][i-1]);
-				if (matrice[1][i-1] != 'S' && matrice[1][i-1] != 'D'){
-					element.onclick = function() { presidenteInSede(this); }; //aggiungo la funzione click
-					element.onmousedown = function() { 
-											timerId = setInterval(function() {
-																	presidenteInSede(document.getElementById(currentId));
-													}, 500);
-										}; //aggiungo la funzione onmousedown
-					element.onmouseup = function() { clearInterval(timerId);}; //aggiungo la funzione onmouseup
-					element.onclick = function() { presidenteInSede(this); }; //aggiungo la funzione onclick
-					
-					
-				}else {
-					element.style.cursor = "auto";
-				}
-		  }
-		  
-		  //sg
-		  for (var i = 1; i <= days; i++) {
-				var element = document.getElementById('sg-'+i); //seleziono l'elemento da modificare
-				//console.log('scadenze-'+i+", valore della matrice "+ matrice[0][i-1]);
-				if (matrice[2][i-1] != 'S' && matrice[2][i-1] != 'D'){
-					element.oninput = function() { aggiornaMatriceAttuale(this.getAttribute('id')); }; //aggiungo la funzione onclick
-					element.setAttribute("contenteditable", "true");
-				}
-		  }
-		  
-		  // dipendenti
-		  for (var d = 1; d <= numDipendenti; d++){
-			   for (var i = 1; i <= days; i++) {
-					const currentId = 'cella-'+d+'-'+i;
-					var element = document.getElementById(currentId); //seleziono l'elemento da modificare
-					//console.log('cella-'+d+'-'+i+", valore della matrice "+ matrice[d-1][i-1]);
-					if (matrice[d-1][i-1] == 'S' || matrice[d-1][i-1] == 'T'){
-						element.onclick = function() { turnoDelSabato(this); }; //aggiungo la funzione onchange
-					}else if (matrice[d-1][i-1] != 'D'){
-						element.oncontextmenu=function(e) {e.preventDefault(); cambiaValoreIndietro(this); };
-						element.onmousedown = function() { 
-											timerId = setInterval(function() {
-																	cambiaValore(document.getElementById(currentId));
-													}, 500);
-										}; //aggiungo la funzione onmousedown
-						element.onmouseup = function() { clearInterval(timerId);}; //aggiungo la funzione onmouseup
-						element.onclick = function() { cambiaValore(this); }; //aggiungo la funzione onclick								
-					}
-			   }
-		   }
-	  }
-	  
 	  
 	  function caricaNumeroGiorniLavorativi() {
 		var xhr = new XMLHttpRequest();
@@ -494,8 +421,9 @@
 			  matrice = JSON.parse(xhr.responseText);
 			  matriceAttuale = JSON.parse(xhr.responseText);
 			  caricaValori();
-			  caricaFunzioni();
-			  //copiaMatrice(matrice, matriceAttuale);
+			  if (typeof caricaFunzioni === 'function') {
+					caricaFunzioni();
+			  }
 			  calcolaPercentualeUfficioIniziale();
 			}
 		  };
@@ -524,7 +452,8 @@
 		// Itera su tutte le righe della tabella, a partire dalla seconda riga (prima header)
 		let len = table.rows.length - 2;
 		//console.log("setUnsetColumnBorderBold numero delle celle da impostare per bold:"+len);
-		const innerStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+";";
+		var showCursor = "cursor:" + (isAllowed ? "pointer;" : "auto;") + " ";
+		const innerStyle = showCursor + "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+";";
 		for (let i = 1; i < len; i++) { //l'ultima riga contiene i bottoni
 		  // Seleziona la cella corrispondente alla colonna desiderata
 		  let cell = table.rows[i].cells[colIndex];
@@ -533,11 +462,11 @@
 		  cell.style = innerStyle;
 		}
 		
-		let headCellStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-top: "+size+"px solid "+color+";";
+		let headCellStyle =  showCursor + "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-top: "+size+"px solid "+color+";";
 		let headCell = document.getElementById(prefix+"th-"+today);
         //console.log("setUnsetColumnBorderBold Applico lo stile "+headCellStyle+" alla cella di testa "+headCell.id);
 		headCell.style = headCellStyle;
-		let footCellStyle = "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-bottom: "+size+"px solid "+color+";";
+		let footCellStyle = showCursor + "border-left: "+size+"px solid "+color+"; border-right: "+size+"px solid "+color+"; border-bottom: "+size+"px solid "+color+";";
 		let footCell = table.rows[len].cells[colIndex];
         //console.log("Applico lo stile "+footCellStyle+" alla cella di coda "+footCell.id);
 		footCell.style = footCellStyle;

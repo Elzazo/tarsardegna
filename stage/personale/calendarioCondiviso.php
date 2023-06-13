@@ -7,6 +7,9 @@
 			<script lang="javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 			<script>
 			  <?php
+			    $ipAddress = $_SERVER['REMOTE_ADDR'];
+				$hostName = gethostbyaddr($ipAddress);
+				echo "var hostName = '".$hostName."';";
 				$month = isset($_GET['month']) ? $_GET['month'] : date('m');
 				$year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 				$day = isset($_GET['month']) ? ($month == date('m') ? date('d') : -1) : date('d');
@@ -17,6 +20,18 @@
 			  <?php $days = cal_days_in_month(CAL_GREGORIAN, $month, $year);  ?>; //giorni del mese		  
 			  
 			  <?php echo file_get_contents('js\calendarioCondivisoConsts.js'); ?>
+			  <?php
+				$fileContents = file_get_contents("consts/writeUsers.txt");
+				$isAllowed = strpos($fileContents, $hostName) !== false;
+				if ($isAllowed) {
+					echo "console.log('La macchina ".$hostName." appartiene ad un write user, le funzioni di modifica sono abilitate');";
+					echo "var isAllowed = true;";
+					echo file_get_contents('js\calendarioCondivisoWriteUser.js');
+				}else {
+					echo "var isAllowed = false;";
+					echo "console.log('La macchina ".$hostName." NON appartiene ad un write user, le funzioni di modifica sono disabilitate.');";
+				}
+			  ?>
 			  <?php echo file_get_contents('js\calendarioCondiviso.js'); ?>
 			  <?php
 				// Apriamo il file in lettura
@@ -102,19 +117,35 @@
 								echo "<th>$value</th>\n";
 								if (0 == $key) {
 									for ($i = 1; $i <= $days; $i++) {
-										echo "<td data-bs-toggle='tooltip' title='Fare click sulla cella per modificare il contenuto' id='scadenze-".$i."'/>";
+										if ($isAllowed){
+											echo "<td data-bs-toggle='tooltip' title='Fare click sulla cella per modificare il contenuto' id='scadenze-".$i."'/>";
+										}else {
+											echo "<td id='scadenze-".$i."' style='cursor:auto'/>";
+										}
 									}
 								}else if (1 == $key) {
 									for ($i = 1; $i <= $days; $i++) {
-										echo "<td data-bs-toggle='tooltip' title='Usare il tasto sinistro per impostare o rimuovere la presenza nel giorno' id='presidente-".$i."' class='cella'/>";
+										if ($isAllowed){
+											echo "<td data-bs-toggle='tooltip' title='Usare il tasto sinistro per impostare o rimuovere la presenza nel giorno' id='presidente-".$i."' class='cella'/>";
+										} else {
+											echo "<td id='presidente-".$i."' class='cella' style='cursor:auto'/>";
+										}
 									}
 								}else if (2 == $key) {
 									for ($i = 1; $i <= $days; $i++) {
-										echo "<td data-bs-toggle='tooltip' title='Fare click sulla cella per modificare il contenuto' id='sg-".$i."'/>";
+										if ($isAllowed){
+											echo "<td data-bs-toggle='tooltip' title='Fare click sulla cella per modificare il contenuto' id='sg-".$i."'/>";
+										}else {
+											echo "<td id='sg-".$i."' style='cursor:auto'/>";
+										}
 									}
 								}else {
 									for ($i = 1; $i <= $days; $i++) {
-										echo "<td data-bs-toggle='tooltip' title='Usare il tasto sinistro o destro per cambiare i valori' class='cella' id='cella-".($key-2)."-".$i."'></td>\n";
+										if ($isAllowed) {
+											echo "<td data-bs-toggle='tooltip' title='Usare il tasto sinistro o destro per cambiare i valori' class='cella' id='cella-".($key-2)."-".$i."'></td>\n";
+										}else {
+											echo "<td class='cella' id='cella-".($key-2)."-".$i."' style='cursor:auto'></td>\n";
+										}
 									}
 									echo "<td data-bs-toggle='tooltip' title='Numero di giorni lavorativi nel mese' id='presUfficio-".($key-2)."'/>\n";
 									echo "<td data-bs-toggle='tooltip' title='Giorni di ferie richiesti' id='ferie-".($key-2)."'/>\n";
@@ -166,16 +197,22 @@
 								for ($i = 1; $i <= $days; $i++) {
 									$nomeDiv = str_replace(' ', '', trim($labels[$idx]));
 									$nomeDiv = str_replace('\n', '', trim($nomeDiv));
-									echo "<td id='td-$nomeDiv-$i' style='white-space: nowrap;' onmouseover='showDiv(\"div-$nomeDiv-$i\");' onmouseout='hideDiv(\"div-$nomeDiv-$i\");'>";
+									if ($isAllowed) {
+										echo "<td id='td-$nomeDiv-$i' style='white-space: nowrap;' onmouseover='showDiv(\"div-$nomeDiv-$i\");' onmouseout='hideDiv(\"div-$nomeDiv-$i\");'>";
+									}else {
+										echo "<td id='td-$nomeDiv-$i' style='white-space: nowrap;'>";
+									}
 									echo "<div id='div-text-$nomeDiv-$i'></div>";
 									echo "<div id='div-$nomeDiv-$i' style='display:none' valore=''>";
-									echo "<select id='select-$nomeDiv-$i' onchange='setSelect(this);'>";
-									echo "<option/>";
-									foreach ($options as $option){
-										$trimmedOption = trim($option);
-										echo "<option value=\"$trimmedOption\"  valore=\"$trimmedOption\" >$trimmedOption</option>";
+									if ($isAllowed){
+										echo "<select id='select-$nomeDiv-$i' onchange='setSelect(this);'>";
+										echo "<option/>";
+										foreach ($options as $option){
+											$trimmedOption = trim($option);
+											echo "<option value=\"$trimmedOption\"  valore=\"$trimmedOption\" >$trimmedOption</option>";
+										}
+										echo "</select>\n";
 									}
-									echo "</select>\n";
 									echo "</div>";
 									echo "</td>\n";
 								}
